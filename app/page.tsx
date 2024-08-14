@@ -1,33 +1,37 @@
 "use client";
 
-import {  SignInButton, UserButton, UserProfile } from "@clerk/nextjs";
+import { Loading } from "@/components/Loading";
+import { Logo } from "@/components/Logo";
+import { SignInButton } from "@clerk/nextjs";
 import { useConvexAuth } from "convex/react";
+import { ArrowRight } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
   const { isLoading, isAuthenticated } = useConvexAuth();
+  const router = useRouter();
 
   if (isLoading) {
-    return <div>Loading....</div>;
+    return <Loading />;
   }
   if (!isLoading && !isAuthenticated) {
     return (
-      <div>
-        <h1>Landing page</h1>
+      <main className="h-full w-full flex flex-col justify-center items-center gap-6">
+        <Logo size="Icon" />
         <SignInButton
           mode="modal"
-          // signUpFallbackRedirectUrl="/"
+          signUpFallbackRedirectUrl="/"
           signUpForceRedirectUrl="/"
         >
-          <button>Sign in</button>
+          <button className="bg-blue-800 text-white flex items-center py-2 px-6 rounded-sm gap-2">
+            <span className="text-2xl ">Start</span>
+            <ArrowRight />
+          </button>
         </SignInButton>
-      </div>
+      </main>
     );
   }
-  return (
-    <div>
-      <span>Landing Page</span>
-      <p>Start now</p>
-      <UserButton />
-    </div>
-  );
+  if (!isLoading && isAuthenticated) {
+    router.push("/my-documents");
+  }
 }

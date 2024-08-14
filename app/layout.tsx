@@ -2,6 +2,10 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ClerkConvexProvider } from "@/providers/clerk-convex-provider";
+import { cn } from "@/lib/utils";
+import { ThemeProvider } from "@/providers/theme-provider";
+import { Toaster } from "sonner";
+import { RenameModal } from "@/components/modals/rename-modal";
 
 const font = Inter({ subsets: ["latin"] });
 
@@ -17,8 +21,24 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={font.className}>
-        <ClerkConvexProvider>{children}</ClerkConvexProvider>
+      <body
+        className={cn(
+          font.className,
+          "antialiased bg-[--light-bg] dark:bg-[--dark-bg2] text-black dark:text-white"
+        )}
+      >
+        <ClerkConvexProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="dark"
+            enableSystem
+            disableTransitionOnChange
+          >
+            {children}
+            <Toaster position="bottom-center" />
+            <RenameModal />
+          </ThemeProvider>
+        </ClerkConvexProvider>
       </body>
     </html>
   );
