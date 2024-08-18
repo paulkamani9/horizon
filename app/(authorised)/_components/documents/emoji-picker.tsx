@@ -28,13 +28,14 @@ export const IconPicker = ({
 
   return (
     <Popover open={open}>
-      <PopoverTrigger asChild onClick={toOpen}>{children}</PopoverTrigger>
+      <PopoverTrigger onClick={toOpen}>{children}</PopoverTrigger>
       <PopoverContent className="p-0 w-full border-none shadow-none">
         <EmojiPicker
           className="absolute bottom-2"
           height={350}
           theme={theme}
-          onEmojiClick={(data) => {
+          onEmojiClick={(data,e) => {
+           
             onChange(data.emoji);
           }}
         />

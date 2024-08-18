@@ -1,14 +1,15 @@
 import { DocumentsList } from "../_components/documents/documents-list";
+import { PageWrapper } from "../_components/page-wrapper";
 import { Header } from "./_components.tsx/header";
 
 const MyDocumentsPage = () => {
   return (
-    <div className="w-full h-full">
+    <section className="w-full h-full px-2">
       <Header />
-      <div className="mt-10   max-h-[calc(100%-104px)] overflow-auto">
-        <DocumentsList />
-      </div>
-    </div>
+      <PageWrapper>
+        <DocumentsList  />
+      </PageWrapper>
+    </section>
   );
 };
 export default MyDocumentsPage;

@@ -1,0 +1,67 @@
+"use client";
+
+import { FollowButton } from "@/app/(authorised)/_components/follow-button";
+import { HeaderWrapper } from "@/app/(authorised)/_components/header-wrapper";
+import { MessageButton } from "@/app/(authorised)/_components/message-button";
+import { api } from "@/convex/_generated/api";
+import { useQuery } from "convex/react";
+import Image from "next/image";
+import { StarInformation } from "../../_components/star-information";
+import { Skeleton } from "@/components/ui/skeleton";
+interface HeaderProps {
+  id: string;
+}
+const Header = ({ id }: HeaderProps) => {
+  const user = useQuery(api.users.getAnotherUser, { externalId: id });
+  if (!user) {
+    return <HeaderSkeleton />;
+  }
+
+  return (
+    <HeaderWrapper>
+      <div className="w-full h-full flex  gap-4">
+        <div className="h-10 w-10 rounded-[50%] relative overflow-clip">
+          <Image src={user.image} alt={user.name} objectFit="fill" fill />
+        </div>
+        <div className="flex-1 flex flex-col">
+          <p className="text-xl font-semibold">{user.name}</p>
+          <div className="flex flex-col lg:flex-row lg:justify-between gap-3">
+            <div className="pl-2 opacity-80">
+              <StarInformation />
+            </div>
+            <div className="flex gap-4">
+              <FollowButton isFollowing={true} />
+              <MessageButton />
+            </div>
+          </div>
+        </div>
+      </div>
+    </HeaderWrapper>
+  );
+};
+export default Header;
+
+const HeaderSkeleton = () => {
+  return (
+    <HeaderWrapper>
+      <div className="w-full h-full flex  gap-4">
+        <div className="h-10 w-10 rounded-[50%] relative overflow-clip">
+          <Skeleton className="w-full h-full" />
+        </div>
+        <div className="flex-1 flex flex-col">
+          <Skeleton className="h-10 w-full" />
+          <div className="flex flex-col lg:flex-row lg:justify-between gap-3 h-full w-full">
+            <div className="flex mt-1 gap-4">
+              <Skeleton className="h-4 w-10" />
+              <Skeleton className="h-4 w-10" />
+            </div>
+            <div className="flex gap-4">
+              <Skeleton className="h-8 w-20" />
+              <Skeleton className="h-8 w-20" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </HeaderWrapper>
+  );
+};

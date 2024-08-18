@@ -5,7 +5,7 @@ import { useMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 import { useSidebar } from "@/store/use-sidebar";
 import { UserButton, useUser } from "@clerk/nextjs";
-import { Newspaper, NotebookPen, Settings } from "lucide-react";
+import { Newspaper, NotebookPen, Settings, Users } from "lucide-react";
 import { SidebarItem } from "./sidebar-items";
 import { NewButton } from "./new-button";
 
@@ -16,7 +16,7 @@ export const Sidebar = () => {
   return (
     <aside
       className={cn(
-        "xl:w-[342px] w-[250px] top-0 left-0 absolute bg-[--light-bg2] dark:bg-[--dark-bg2] h-full z-50 transition-transform",
+        "xl:w-[300px] w-[250px] top-0 left-0 absolute bg-[--light-bg2] dark:bg-[--dark-bg2] h-full z-50 transition-transform",
         !isOpen && isMobile && "-translate-x-full",
         isMobile && isOpen && "w-[250px]"
       )}
@@ -27,13 +27,15 @@ export const Sidebar = () => {
         </div>
         <div className="flex-1 flex flex-col items-start justify-between w-full mt-5">
           <nav className=" flex flex-col items-start justify-start w-full text-xl">
-            <SidebarItem name="Public" link="/public" Icon={Newspaper} />
             <SidebarItem
               name="My documents"
               link="/my-documents"
               Icon={NotebookPen}
             />
+            <SidebarItem name="Public" link="/public" Icon={Newspaper} />
+            <SidebarItem name="People" link="/people" Icon={Users} />
             <SidebarItem name="Settings" link="/settings" Icon={Settings} />
+
             <div className="block mx-auto md:hidden mt-10">
               <NewButton />
             </div>

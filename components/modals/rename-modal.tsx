@@ -58,7 +58,7 @@ export const RenameModal = () => {
 
   if (isMobile) {
     return (
-      <Drawer open={isOpen} onOpenChange={(isOpen) => !isOpen}>
+      <Drawer open={isOpen} onClose={onClose} onOpenChange={(isOpen) => !isOpen}>
         <DrawerContent>
           <DrawerHeader>
             <DrawerTitle>Rename document</DrawerTitle>

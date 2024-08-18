@@ -9,7 +9,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Pencil, Smile, Trash2 } from "lucide-react";
 import { AlertAction } from "../alert-action";
-import { Button } from "@/components/ui/button";
 import { useApiMutation } from "@/hooks/use-api-mutation";
 import { api } from "@/convex/_generated/api";
 import { useRenameModal } from "@/store/use-rename-modal";
@@ -18,6 +17,7 @@ import { useMutation } from "convex/react";
 import { Id } from "@/convex/_generated/dataModel";
 import { toast } from "sonner";
 import { useEmojiPicker } from "@/store/use-emoji-picker";
+
 
 interface ActionsProps {
   children: React.ReactNode;
@@ -31,7 +31,7 @@ export const Actions = ({ children, title, documentId }: ActionsProps) => {
     api.documents.deleteMyDocument
   );
   const changeIcon = useMutation(api.documents.changeMyDocumentIcon);
-  const { toClose} = useEmojiPicker();
+  const { toClose } = useEmojiPicker();
 
   const onChange = (icon: string) => {
     const promise = changeIcon({ icon, documentId });
@@ -51,28 +51,31 @@ export const Actions = ({ children, title, documentId }: ActionsProps) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>{children}</DropdownMenuTrigger>
-      <DropdownMenuContent>
-        <DropdownMenuItem
-          onClick={() => {
-            onOpen(documentId, title);
-          }}
-        >
-          <Button
-            variant="ghost"
-            className="text-xs flex gap-2 items-center pl-2"
-          >
+      <DropdownMenuContent
+        onClick={(e) => {
+          e.stopPropagation();
+        }}
+      >
+        <DropdownMenuItem onClick={() => onOpen(documentId, title)}>
+          <div className="text-xs flex gap-4 px-1 py-2 items-center w-full justify-start cursor-pointer ">
             <Pencil size={16} /> Rename document
-          </Button>
+          </div>
         </DropdownMenuItem>
 
-        <IconPicker onChange={onChange}>
-          <Button
-            variant="ghost"
-            className="text-xs w-full flex gap-2 items-center justify-start"
-          >
-            <Smile size={16} /> Change icon
-          </Button>
-        </IconPicker>
+        <DropdownMenuItem>
+          <IconPicker onChange={onChange}>
+            <div
+              onClick={(e) => {
+                e.preventDefault();
+              }}
+              // variant="ghost"
+              className="text-xs w-full flex items-center justify-start gap-4 px-1 py-2"
+            >
+              <Smile size={16} />
+              Change icon
+            </div>
+          </IconPicker>
+        </DropdownMenuItem>
 
         <DropdownMenuSeparator />
 
@@ -82,12 +85,9 @@ export const Actions = ({ children, title, documentId }: ActionsProps) => {
           color="red"
           onConfirm={onDeleteMyDocument}
         >
-          <Button
-            variant="ghost"
-            className="text-xs flex gap-2 items-center text-[--dark-red] dark:text-[--light-red]"
-          >
+          <div className="text-xs flex gap-4 px-3  py-4 rounded-sm items-center justify-start text-[--dark-red] dark:text-[--light-red] hover:bg-[--light-bg] hover:dark:bg-[--dark-bg] cursor-pointer">
             <Trash2 size={16} /> Delete document
-          </Button>
+          </div>
         </AlertAction>
       </DropdownMenuContent>
     </DropdownMenu>

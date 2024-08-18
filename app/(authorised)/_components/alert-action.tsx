@@ -17,7 +17,7 @@ interface AlertActionProps {
   title: string;
   description: string;
   color?: "red" | "blue" | "gray";
-  onConfirm: () => void;
+  onConfirm:()=>void;
 }
 
 export const AlertAction = ({
@@ -29,7 +29,7 @@ export const AlertAction = ({
 }: AlertActionProps) => {
   return (
     <AlertDialog>
-      <AlertDialogTrigger>{children}</AlertDialogTrigger>
+      <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>{title}</AlertDialogTitle>
@@ -38,7 +38,10 @@ export const AlertAction = ({
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
           <AlertDialogAction
-            onClick={onConfirm}
+            onClick={(e) => {
+              e.stopPropagation();
+              onConfirm();
+            }}
             className={cn(
               color === "red" &&
                 "bg-[--dark-red] dark:text-white hover:dark:text-black"

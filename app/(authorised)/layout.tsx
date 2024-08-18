@@ -34,7 +34,7 @@ const AuthorizedLayout = ({ children }: AuthorizedLayoutProps) => {
         <Topper />
         <div className="flex-1 relative flex">
           <Sidebar />
-          <div className="h-full w-full flex flex-col xl:pl-[342px] pl-[250px]">
+          <div className="h-full w-full flex flex-col xl:pl-[300px] pl-[250px]">
             <Toolbar />
             <section className="flex-1 px-6 max-h-[calc(100vh-28px)] md:max-h-[calc(100vh-136px)] overflow-auto">
               {children}
@@ -46,7 +46,7 @@ const AuthorizedLayout = ({ children }: AuthorizedLayoutProps) => {
   }
 
   return (
-    <main className="h-full w-full bg-[--light-bg] dark:bg-[--dark-bg] flex flex-col relative">
+    <main  className="h-full  w-full bg-[--light-bg] dark:bg-[--dark-bg] flex flex-col relative">
       <Topper />
       <Toolbar />
       <div
@@ -55,7 +55,7 @@ const AuthorizedLayout = ({ children }: AuthorizedLayoutProps) => {
           onClose();
         }}
         className={cn(
-          "absolute h-full w-full bg-[--light-bg] dark:bg-[--dark-bg] opacity-60",
+          "absolute h-full w-full bg-[--light-bg] dark:bg-[--dark-bg] opacity-60 z-50",
           !isOpen && "hidden"
         )}
       />

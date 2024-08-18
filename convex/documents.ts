@@ -13,6 +13,7 @@ export const createDocument = mutation({
       title,
       icon: "😎",
       authorId: externalId,
+      isPublic: false,
     });
   },
 });
@@ -100,5 +101,84 @@ export const changeMyDocumentIcon = mutation({
     await ctx.db.patch(existingDocument._id, {
       icon: newIcon,
     });
+  },
+});
+
+export const toggleMyDocumentsPublicity = mutation({
+  args: {
+    documentId: v.id("documents"),
+  },
+  handler: async (ctx, { documentId }) => {
+    const { externalId } = await getCurrentUserOrThrow(ctx);
+
+    const document = await ctx.db.get(documentId);
+
+    if (!document) {
+      throw new Error("Document not found");
+    }
+
+    if (document.authorId !== externalId) {
+      throw new Error("You are not the owner of this document");
+    }
+
+    await ctx.db.patch(document._id, {
+      isPublic: !document.isPublic,
+    });
+  },
+});
+
+export const getAnotherUsersPublicDocuments = query({
+  args: {
+    id: v.string(),
+  },
+  handler: async (ctx, args) => {
+    await getCurrentUserOrThrow(ctx);
+
+    const documents = await ctx.db
+      .query("documents")
+      .withIndex("byAuthorIdPublicDocument", (q) =>
+        q.eq("authorId", args.id).eq("isPublic", true)
+      )
+      .collect();
+
+    return documents;
+  },
+});
+
+export const checkRoleAndReturnDocument = query({
+  args: { documentId: v.id("documents") },
+  handler: async (ctx, { documentId }) => {
+    const { externalId } = await getCurrentUserOrThrow(ctx);
+
+    const document = await ctx.db.get(documentId);
+
+    if (!document) {
+      throw new Error("Document not found");
+    }
+
+    if (document.authorId !== externalId) {
+      const collaboration = await ctx.db
+        .query("collaboration")
+        .withIndex("byDocumentIdAndCollaboratorId", (q) =>
+          q.eq("documentId", document._id).eq("collaboratorId", externalId)
+        )
+        .unique();
+
+      if (collaboration) {
+        return {
+          ...document,
+          role: "admin",
+        };
+      }
+      return {
+        ...document,
+        role: "member",
+      };
+    }
+
+    return {
+      ...document,
+      role: "owner",
+    };
   },
 });

@@ -2,31 +2,36 @@
 import { Star, UserRoundCheck } from "lucide-react";
 import { NewButton } from "../../_components/new-button";
 import { useMobile } from "@/hooks/use-mobile";
+import { HeaderWrapper } from "../../_components/header-wrapper";
 
 export const Header = () => {
   const isMobile = useMobile();
 
   if (isMobile) {
     return (
-      <div className="w-full h-16 flex  items-center  justify-between">
-        <div className="flex flex-col gap-2">
-          <span className="text-xl font-semibold">My Documents</span>
-          <UserRatings />
+      <HeaderWrapper>
+        <div className="w-full h-full flex  items-center justify-between">
+          <div className="flex flex-col gap-2">
+            <span className="text-xl font-semibold">My Documents</span>
+            <UserRatings />
+          </div>
+          <div className="md:hidden inline-flex">
+            <NewButton />
+          </div>
         </div>
-        <div className="md:hidden inline-flex">
-          <NewButton />
-        </div>
-      </div>
+      </HeaderWrapper>
     );
   }
 
   return (
-    <div className="w-full h-16 flex flex-col">
-      <UserRatings />
-      <div>
-        <span className="text-xl font-semibold">My Documents</span>
+    <HeaderWrapper>
+      <div className="w-full h-full flex flex-col">
+        <UserRatings />
+        <div>
+          <span className="text-xl font-semibold">My Documents</span>
+        </div>
       </div>
-    </div>
+    </HeaderWrapper>
   );
 };
 
