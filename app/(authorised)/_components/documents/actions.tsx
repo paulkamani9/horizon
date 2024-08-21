@@ -13,10 +13,7 @@ import { useApiMutation } from "@/hooks/use-api-mutation";
 import { api } from "@/convex/_generated/api";
 import { useRenameModal } from "@/store/use-rename-modal";
 import { IconPicker } from "./emoji-picker";
-import { useMutation } from "convex/react";
 import { Id } from "@/convex/_generated/dataModel";
-import { toast } from "sonner";
-import { useEmojiPicker } from "@/store/use-emoji-picker";
 
 
 interface ActionsProps {
@@ -30,19 +27,6 @@ export const Actions = ({ children, title, documentId }: ActionsProps) => {
   const { mutate: deleteMyDocumentMutation } = useApiMutation(
     api.documents.deleteMyDocument
   );
-  const changeIcon = useMutation(api.documents.changeMyDocumentIcon);
-  const { toClose } = useEmojiPicker();
-
-  const onChange = (icon: string) => {
-    const promise = changeIcon({ icon, documentId });
-    toClose();
-
-    toast.promise(promise, {
-      success: "Icon changed",
-      loading: "Changing icon..",
-      error: "Failed to change icon.",
-    });
-  };
 
   const onDeleteMyDocument = () => {
     deleteMyDocumentMutation({ documentId });
@@ -63,7 +47,7 @@ export const Actions = ({ children, title, documentId }: ActionsProps) => {
         </DropdownMenuItem>
 
         <DropdownMenuItem>
-          <IconPicker onChange={onChange}>
+          <IconPicker documentId={documentId}>
             <div
               onClick={(e) => {
                 e.preventDefault();

@@ -32,7 +32,7 @@ export const Sidebar = () => {
               link="/my-documents"
               Icon={NotebookPen}
             />
-            <SidebarItem name="Public" link="/public" Icon={Newspaper} />
+            <SidebarItem name="Public" link="/feed" Icon={Newspaper} />
             <SidebarItem name="People" link="/people" Icon={Users} />
             <SidebarItem name="Settings" link="/settings" Icon={Settings} />
 

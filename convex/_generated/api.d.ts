@@ -16,9 +16,13 @@ import type {
 } from "convex/server";
 import type * as collaborations from "../collaborations.js";
 import type * as documents from "../documents.js";
+import type * as followership from "../followership.js";
 import type * as http from "../http.js";
 import type * as invitations from "../invitations.js";
+import type * as stars from "../stars.js";
+import type * as tags from "../tags.js";
 import type * as users from "../users.js";
+import type * as views from "../views.js";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -31,9 +35,13 @@ import type * as users from "../users.js";
 declare const fullApi: ApiFromModules<{
   collaborations: typeof collaborations;
   documents: typeof documents;
+  followership: typeof followership;
   http: typeof http;
   invitations: typeof invitations;
+  stars: typeof stars;
+  tags: typeof tags;
   users: typeof users;
+  views: typeof views;
 }>;
 export declare const api: FilterApi<
   typeof fullApi,

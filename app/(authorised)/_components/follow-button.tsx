@@ -1,26 +1,43 @@
+"use client";
+
+import { api } from "@/convex/_generated/api";
 import { cn } from "@/lib/utils";
-import { MouseEventHandler, useState } from "react";
+import { useMutation, useQuery } from "convex/react";
 
 interface FollowButtonProps {
-  isFollowing: boolean;
+  id: string;
 }
 
-export const FollowButton = ({ isFollowing }: FollowButtonProps) => {
-  const [follow, setFollow] = useState(isFollowing);
-  const onClickFollowButton: MouseEventHandler<HTMLButtonElement> = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setFollow(!follow);
-  };
+export const FollowButton = ({ id }: FollowButtonProps) => {
+  const isFollow = useQuery(api.followership.getFollowershipStatus, {
+    followedId: id,
+  });
+
+  const toggleFollowership = useMutation(api.followership.toggleFollowership);
+
+  if (isFollow === undefined) {
+    return (
+      <button className="bg-transparent border border-black dark:border-white px-4 py-2 rounded text-sm animate-pulse">
+        ...
+      </button>
+    );
+  }
+
   return (
     <button
-      onClick={onClickFollowButton}
+      onClick={(e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        toggleFollowership({
+          followedId: id,
+        });
+      }}
       className={cn(
         "bg-transparent border border-black dark:border-white px-4 py-2  rounded text-sm",
-        !follow && "bg-blue-800 border-none text-white"
+        !isFollow && "bg-blue-800 border-none text-white"
       )}
     >
-      {follow ? "Following" : "Follow"}
+      {isFollow ? "Following" : "Follow"}
     </button>
   );
 };

@@ -50,9 +50,9 @@ export const RenameModal = () => {
     });
 
     toast.promise(promise, {
-      success: "Board renamed",
-      loading: "Renaming board",
-      error: "Failed to rename board",
+      success: "Success, you have changed documents' name.",
+      loading: "Renaming document",
+      error: "Failed to rename document",
     });
   };
 

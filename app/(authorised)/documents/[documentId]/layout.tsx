@@ -21,21 +21,29 @@ const DocumentLayout = ({ children }: DocumentLayoutProps) => {
 
   const document = useQuery(api.documents.checkRoleAndReturnDocument, {
     documentId: documentId as Id<"documents">,
-  });
+  })
 
-  if(!document){
-    return (
-      <p>no found doc</p>
-    )
+  if (!document) {
+    return <p>no found doc</p>;
   }
+
+
 
   return (
     <div className="h-full w-full relative ">
-      <Header />
+      <Header
+        documentId={document._id}
+        role={document.role}
+        icon={document.icon}
+        title={document.title}
+      />
       <EditBar
-       role={document.role}
+        role={document.role}
         isPublic={document.isPublic}
-        documentId={document._id} />
+        documentId={document._id}
+        authorId={document.authorId}
+        title={document.title}
+      />
       <div
         role="button"
         onClick={() => {

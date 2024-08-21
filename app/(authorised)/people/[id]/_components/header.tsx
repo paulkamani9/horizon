@@ -1,13 +1,12 @@
 "use client";
 
-import { FollowButton } from "@/app/(authorised)/_components/follow-button";
 import { HeaderWrapper } from "@/app/(authorised)/_components/header-wrapper";
-import { MessageButton } from "@/app/(authorised)/_components/message-button";
 import { api } from "@/convex/_generated/api";
 import { useQuery } from "convex/react";
 import Image from "next/image";
-import { StarInformation } from "../../_components/star-information";
+import { UserCounts } from "../../_components/user-counts";
 import { Skeleton } from "@/components/ui/skeleton";
+import { FollowAndMessage } from "@/app/(authorised)/_components/follow-and-message";
 interface HeaderProps {
   id: string;
 }
@@ -27,12 +26,9 @@ const Header = ({ id }: HeaderProps) => {
           <p className="text-xl font-semibold">{user.name}</p>
           <div className="flex flex-col lg:flex-row lg:justify-between gap-3">
             <div className="pl-2 opacity-80">
-              <StarInformation />
+              <UserCounts id={id} />
             </div>
-            <div className="flex gap-4">
-              <FollowButton isFollowing={true} />
-              <MessageButton />
-            </div>
+            <FollowAndMessage id={id} />
           </div>
         </div>
       </div>

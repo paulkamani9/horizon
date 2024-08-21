@@ -1,19 +1,37 @@
 "use client";
-import { Star, UserRoundCheck } from "lucide-react";
 import { NewButton } from "../../_components/new-button";
 import { useMobile } from "@/hooks/use-mobile";
 import { HeaderWrapper } from "../../_components/header-wrapper";
+import { UserCounts } from "../../people/_components/user-counts";
+import { useUser } from "@clerk/nextjs";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export const Header = () => {
   const isMobile = useMobile();
+  const { user } = useUser();
+
+  if (user === undefined) {
+    return (
+      <HeaderWrapper>
+        <div className="w-full h-full flex  items-center justify-between">
+          <div className="flex-1 flex flex-col gap-2">
+            <Skeleton className="h-10 w-2/3 md:w-1/3" />
+          </div>
+          <div className="md:hidden inline-flex">
+            <NewButton />
+          </div>
+        </div>
+      </HeaderWrapper>
+    );
+  }
 
   if (isMobile) {
     return (
       <HeaderWrapper>
         <div className="w-full h-full flex  items-center justify-between">
           <div className="flex flex-col gap-2">
-            <span className="text-xl font-semibold">My Documents</span>
-            <UserRatings />
+            <span className="text-xl font-semibold">{user?.fullName!}</span>
+            <UserCounts id={user?.id!} large={true} />
           </div>
           <div className="md:hidden inline-flex">
             <NewButton />
@@ -25,27 +43,11 @@ export const Header = () => {
 
   return (
     <HeaderWrapper>
-      <div className="w-full h-full flex flex-col">
-        <UserRatings />
-        <div>
-          <span className="text-xl font-semibold">My Documents</span>
-        </div>
+      <div className="flex flex-col gap-2">
+        <span className="text-2xl font-semibold">{user?.fullName!}</span>
+        <UserCounts large={true} id={user?.id!} />
       </div>
     </HeaderWrapper>
   );
 };
 
-const UserRatings = () => {
-  return (
-    <div className="flex gap-4 items-center justify-start ml-2 md:ml-0 md:justify-end">
-      <div className="flex items-center justify-start gap-1">
-        <Star className="fill-black/60 dark:fill-white/60 stroke-none h-4 w-4 xl:h-5 xl:w-5" />
-        <span className="opacity-60 text-sm xl:text-base">10.9 m</span>
-      </div>
-      <div className="flex  items-center justify-start gap-1">
-        <UserRoundCheck className="h-4 w-4 xl:h-5 xl:w-5" />
-        <span className="opacity-60 text-sm xl:text-base">2.8 m</span>
-      </div>
-    </div>
-  );
-};

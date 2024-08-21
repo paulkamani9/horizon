@@ -20,8 +20,8 @@ export default function Home() {
         <Logo size="Icon" />
         <SignInButton
           mode="modal"
-          signUpFallbackRedirectUrl="/"
-          signUpForceRedirectUrl="/"
+          signUpFallbackRedirectUrl="/feed"
+          signUpForceRedirectUrl="/feed"
         >
           <button className="bg-blue-800 text-white flex items-center py-2 px-6 rounded-sm gap-2">
             <span className="text-2xl ">Start</span>
@@ -32,6 +32,6 @@ export default function Home() {
     );
   }
   if (!isLoading && isAuthenticated) {
-    router.push("/my-documents");
+    router.push("/feed");
   }
 }

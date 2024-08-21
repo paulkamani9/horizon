@@ -8,21 +8,37 @@ import {
   PopoverTrigger,
 } from "../../../../components/ui/popover";
 import { useEmojiPicker } from "@/store/use-emoji-picker";
+import { Id } from "@/convex/_generated/dataModel";
+import { toast } from "sonner";
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
 
 interface IconPickerProps {
-  onChange: (icon: string) => void;
+  documentId: Id<"documents">;
   children: React.ReactNode;
 }
-export const IconPicker = ({
-  onChange,
-  children,
-}: IconPickerProps) => {
-  const {open,toOpen} = useEmojiPicker()
+export const IconPicker = ({ documentId, children }: IconPickerProps) => {
+  const changeIcon = useMutation(api.documents.changeMyDocumentIcon);
+  const { toClose } = useEmojiPicker();
+
+  const onChange = (icon: string) => {
+    const promise = changeIcon({ icon, documentId });
+    toClose();
+
+    toast.promise(promise, {
+      success: "Icon changed",
+      loading: "Changing icon..",
+      error: "Failed to change icon.",
+    });
+  };
+
+  const { open, toOpen } = useEmojiPicker();
   const { resolvedTheme } = useTheme();
   const themeMap = {
     dark: Theme.DARK,
     light: Theme.LIGHT,
   };
+
   const currentTheme = (resolvedTheme || "light") as keyof typeof themeMap;
   const theme = themeMap[currentTheme];
 
@@ -34,8 +50,7 @@ export const IconPicker = ({
           className="absolute bottom-2"
           height={350}
           theme={theme}
-          onEmojiClick={(data,e) => {
-           
+          onEmojiClick={(data, e) => {
             onChange(data.emoji);
           }}
         />

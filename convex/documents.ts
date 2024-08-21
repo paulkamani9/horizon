@@ -1,6 +1,8 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { getCurrentUserOrThrow } from "./users";
+import { Id } from "./_generated/dataModel";
+import { FilterBuilder } from "convex/server";
 
 export const createDocument = mutation({
   args: {
@@ -22,10 +24,51 @@ export const getMyDocuments = query({
   handler: async (ctx) => {
     const { externalId } = await getCurrentUserOrThrow(ctx);
 
-    const documents = await ctx.db
-      .query("documents")
-      .withIndex("byAuthorId", (q) => q.eq("authorId", externalId))
-      .collect();
+    let documents: {
+      _id: Id<"documents">;
+      _creationTime: number;
+      icon?: string;
+      content?: string;
+      description?: string;
+      title: string;
+      authorId: string;
+      isPublic: boolean;
+    }[] = [];
+
+    const [myDocuments, collaborations, invitations] = await Promise.all([
+      ctx.db
+        .query("documents")
+        .withIndex("byAuthorId", (q) => q.eq("authorId", externalId))
+        .collect(),
+      ctx.db
+        .query("collaboration")
+        .withIndex("byCollaboratorId", (q) =>
+          q.eq("collaboratorId", externalId)
+        )
+        .collect(),
+      ctx.db
+        .query("invitations")
+        .withIndex("byInvitedId", (q) => q.eq("invitedId", externalId))
+        .filter((q) => q.neq(q.field("isDenied"), true))
+        .collect(),
+    ]);
+
+    const collaborationsDocuments = await Promise.all(
+      collaborations.map((collaboration) =>
+        ctx.db.get(collaboration.documentId)
+      )
+    );
+
+    const invitationDocuments = await Promise.all(
+      invitations.map((invitation) => ctx.db.get(invitation.documentId))
+    );
+
+    // Filter out any null values in case of missing documents
+    documents = [
+      ...collaborationsDocuments.filter((doc) => doc !== null),
+      ...invitationDocuments.filter((doc) => doc !== null),
+      ...myDocuments.filter((doc) => doc !== null),
+    ];
 
     return documents;
   },
@@ -45,7 +88,30 @@ export const deleteMyDocument = mutation({
       throw new Error("You are not the owner of this document");
     }
 
-    await ctx.db.delete(existingDocument._id);
+    // Fetch related invitations and collaborations
+    const [invitations, collaborations] = await Promise.all([
+      ctx.db
+        .query("invitations")
+        .withIndex("byDocumentId", (q) => q.eq("documentId", documentId))
+        .collect(),
+      ctx.db
+        .query("collaboration")
+        .withIndex("byDocumentId", (q) => q.eq("documentId", documentId))
+        .collect(),
+    ]);
+
+    // Collect IDs to delete
+    const invitationIds = invitations.map((invitation) => invitation._id);
+    const collaborationIds = collaborations.map(
+      (collaboration) => collaboration._id
+    );
+
+    // Perform deletions in parallel
+    await Promise.all([
+      ...invitationIds.map((id) => ctx.db.delete(id)),
+      ...collaborationIds.map((id) => ctx.db.delete(id)),
+      ctx.db.delete(existingDocument._id),
+    ]);
   },
 });
 
@@ -129,19 +195,115 @@ export const toggleMyDocumentsPublicity = mutation({
 
 export const getAnotherUsersPublicDocuments = query({
   args: {
-    id: v.string(),
+    id: v.string(), // The ID of the other user whose documents we're interested in
   },
   handler: async (ctx, args) => {
-    await getCurrentUserOrThrow(ctx);
+    // Identify the current user (required to determine what they can access)
+    const { externalId } = await getCurrentUserOrThrow(ctx);
 
-    const documents = await ctx.db
+    // Initialize an array to collect all documents the current user can access
+    let documents = [];
+
+    // Fetch all public documents authored by the specified user
+    const publicDocuments = await ctx.db
       .query("documents")
       .withIndex("byAuthorIdPublicDocument", (q) =>
         q.eq("authorId", args.id).eq("isPublic", true)
       )
       .collect();
 
-    return documents;
+    // Fetch all documents where the specified user owns the document and the current user is a collaborator
+    const userDocuments = await ctx.db
+      .query("collaboration")
+      .withIndex("byOwnerIdAndCollaboratorId", (q) =>
+        q.eq("ownerId", args.id).eq("collaboratorId", externalId)
+      )
+      .collect()
+      .then((collaborations) =>
+        Promise.all(
+          collaborations.map((collaboration) =>
+            ctx.db.get(collaboration.documentId)
+          )
+        )
+      );
+
+    // Fetch all documents where the specified user is a collaborator
+    const allUserCollaborationsDocuments = await ctx.db
+      .query("collaboration")
+      .withIndex("byCollaboratorId", (q) => q.eq("collaboratorId", args.id))
+      .collect()
+      .then((collaborations) =>
+        Promise.all(
+          collaborations.map((collaboration) =>
+            ctx.db.get(collaboration.documentId)
+          )
+        )
+      );
+
+    // Filter out the documents where the current user is the owner
+    const myDocuments = allUserCollaborationsDocuments.filter(
+      (document) => document?.authorId === externalId
+    );
+
+    // Filter out the documents where the current user is not the owner
+    const otherUsersDocuments = allUserCollaborationsDocuments.filter(
+      (document) => document?.authorId !== externalId
+    );
+
+    // Find documents where both the current user and the specified user are collaborators but neither is the owner
+    const sharedDocuments = await Promise.all(
+      otherUsersDocuments.map(async (document) => {
+        if (document) {
+          const collaboration = await ctx.db
+            .query("collaboration")
+            .withIndex("byDocumentIdAndCollaboratorId", (q) =>
+              q.eq("documentId", document._id).eq("collaboratorId", externalId)
+            )
+            .unique();
+          if (collaboration) {
+            return ctx.db.get(collaboration.documentId);
+          }
+        }
+      })
+    );
+
+    // Fetch all invitations from the specified user to the current user (excluding denied invitations)
+    const invitationDocuments = await ctx.db
+      .query("invitations")
+      .withIndex("byOwnerIdAndInvitedId", (q) =>
+        q.eq("ownerId", args.id).eq("invitedId", externalId)
+      )
+      .filter((q) => q.neq(q.field("isDenied"), true))
+      .collect()
+      .then((invitations) =>
+        Promise.all(
+          invitations.map((invitation) => ctx.db.get(invitation.documentId))
+        )
+      );
+
+    // Combine all fetched documents into a single array, filtering out null values and duplicates
+    documents = [
+      ...userDocuments
+        .filter((doc) => doc !== null)
+        .filter((doc) => doc.isPublic === false),
+      ...invitationDocuments.filter((doc) => doc !== null),
+      ...myDocuments.filter((doc) => doc !== null),
+      ...sharedDocuments
+        .filter((doc) => doc !== null)
+        .filter((doc) => doc !== undefined),
+      ...otherUsersDocuments
+        .filter((doc) => doc !== null)
+        .filter((doc) => doc.isPublic === true),
+      ...publicDocuments,
+    ];
+
+    // Remove duplicate documents by their unique ID
+    const uniqueDocuments = Array.from(
+      new Map(documents.map((doc) => [doc._id, doc])).values()
+    );
+
+    // Return the final collection of documents the current user is allowed to see
+    return uniqueDocuments;
   },
 });
 
@@ -170,10 +332,30 @@ export const checkRoleAndReturnDocument = query({
           role: "admin",
         };
       }
-      return {
-        ...document,
-        role: "member",
-      };
+
+      const invitation = await ctx.db
+        .query("invitations")
+        .withIndex("byDocumentIdAndInvitedId", (q) =>
+          q.eq("documentId", document._id).eq("invitedId", externalId)
+        )
+        .filter((q) => q.neq(q.field("isDenied"), true))
+        .unique();
+
+      if (invitation) {
+        return {
+          ...document,
+          role: "invited",
+        };
+      }
+
+      if (document.isPublic) {
+        return {
+          ...document,
+          role: "member",
+        };
+      }
+
+      throw new Error("You have no right to view this document.");
     }
 
     return {

@@ -19,9 +19,9 @@ export const UsersList = () => {
   }
 
   return (
-    <div className="w-full flex flex-col gap-y-6 ">
-      {users?.map(({ externalId, name, image }) => (
-        <UserItem key={externalId} id={externalId} name={name} image={image} />
+    <div className=" w-full flex flex-col items-center max-w-3xl gap-y-6 mx-auto">
+      {users?.map(({ externalId, name, image,email }) => (
+        <UserItem key={externalId} id={externalId} name={name} image={image} email={email} />
       ))}
     </div>
   );

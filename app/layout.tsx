@@ -5,8 +5,6 @@ import { ClerkConvexProvider } from "@/providers/clerk-convex-provider";
 import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/providers/theme-provider";
 import { Toaster } from "sonner";
-import { RenameModal } from "@/components/modals/rename-modal";
-import { InviteModal } from "@/components/modals/invite-modal";
 import { ModalProvider } from "@/providers/modal-provider";
 
 const font = Inter({ subsets: ["latin"] });

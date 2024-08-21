@@ -1,15 +1,53 @@
-import { Eye, Star } from "lucide-react";
+"use client";
 
-export const StarButton = () => {
+import { Eye, EyeOff } from "lucide-react";
+import { StarItem } from "../../_components/star-item";
+import { Id } from "@/convex/_generated/dataModel";
+import { cn } from "@/lib/utils";
+import { useMutation, useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { useEffect } from "react";
+
+interface StarButtonProps {
+  documentId: Id<"documents">;
+  authorId: string;
+  isPublic: boolean;
+}
+
+export const StarButton = ({
+  isPublic,
+  documentId,
+  authorId,
+}: StarButtonProps) => {
+  const viewsCount = useQuery(api.views.getDocumentViewsCount, {
+    documentId,
+  });
+
+  const viewDocument = useMutation(api.views.addDocumentUniqueViews);
+
+  useEffect(() => {
+    viewDocument({
+      documentId,
+      id: authorId,
+    });
+  }, []);
+
   return (
     <div className="flex items-center justify-center gap-4">
       <div className="flex items-center cursor-pointer gap-2 transition-transform">
-        <Star className=""/>
-        <p>120</p>
+        <StarItem documentId={documentId} isPublic={isPublic} size="large" />
       </div>
-      <div className="flex items-center gap-2">
-        <Eye />
-        <p>120,222</p>
+      <div
+        className={cn(
+          "flex items-center gap-2 opacity-60 text-sm",
+        )}
+      >
+        {isPublic ? (
+          <Eye className="h-5 w-5" />
+        ) : (
+          <EyeOff className="h-5 w-5" />
+        )}
+        <p>{viewsCount}</p>
       </div>
     </div>
   );

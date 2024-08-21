@@ -1,7 +1,7 @@
 "use client";
 
 import { File, MoreVertical } from "lucide-react";
-import { DocumentStar } from "./document-star";
+import { StarItem } from "../star-item";
 import { Actions } from "./actions";
 import { Id } from "@/convex/_generated/dataModel";
 import { useUser } from "@clerk/nextjs";
@@ -14,12 +14,16 @@ interface DocumentItemProps {
   documentId: Id<"documents">;
   title: string;
   icon?: string;
+  authorId: string;
+  isPublic: boolean;
 }
 
 export const DocumentItem = ({
   title,
   documentId,
   icon,
+  authorId,
+  isPublic,
 }: DocumentItemProps) => {
   const { user } = useUser();
   const params = useParams();
@@ -31,7 +35,7 @@ export const DocumentItem = ({
         <button
           className={cn(
             "absolute h-5 w-5 top-1 right-4 ",
-            id && user?.id !== id && "hidden"
+            user?.id !== authorId && "hidden"
           )}
         >
           <Actions documentId={documentId} title={title}>
@@ -43,7 +47,7 @@ export const DocumentItem = ({
         <div className="max-w-full">
           <p className={"truncate text-center"}>{title}</p>
         </div>
-        <DocumentStar />
+        <StarItem documentId={documentId} isPublic={isPublic} size={"small"} />
       </div>
     </Link>
   );
