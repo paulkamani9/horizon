@@ -18,12 +18,7 @@ interface UserItemProps {
 }
 
 export const UserItem = ({ id, name, image, email }: UserItemProps) => {
-  // const onCopyLink = () => {
-  //   navigator.clipboard
-  //     .writeText(`${window.location.origin}/board/${id}`)
-  //     .then(() => toast.success("Link copied"))
-  //     .catch(() => toast.error("Failed to copy link"));
-  // };
+
 
   const onCopyEmail: React.MouseEventHandler<HTMLButtonElement> = (e) => {
     e.preventDefault();
@@ -61,7 +56,7 @@ export const UserItem = ({ id, name, image, email }: UserItemProps) => {
             <UserCounts id={id} />
           </div>
           <div className="mt-4">
-            <FollowAndMessage id={id} />
+            <FollowAndMessage id={id} email={email} name={name} />
           </div>
         </div>
       </div>

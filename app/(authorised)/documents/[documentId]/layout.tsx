@@ -1,7 +1,7 @@
 "use client";
 import { useEditBar } from "@/store/use-edit-bar";
 import { EditBar } from "../_components/edit-bar";
-import { Header } from "../_components/header";
+import { Header, HeaderSkeleton } from "../_components/header";
 import { cn } from "@/lib/utils";
 import { usePC } from "@/hooks/use-Pc";
 import { useParams } from "next/navigation";
@@ -21,13 +21,11 @@ const DocumentLayout = ({ children }: DocumentLayoutProps) => {
 
   const document = useQuery(api.documents.checkRoleAndReturnDocument, {
     documentId: documentId as Id<"documents">,
-  })
+  });
 
-  if (!document) {
-    return <p>no found doc</p>;
+  if (document === undefined) {
+    return <HeaderSkeleton />;
   }
-
-
 
   return (
     <div className="h-full w-full relative ">
@@ -43,6 +41,8 @@ const DocumentLayout = ({ children }: DocumentLayoutProps) => {
         documentId={document._id}
         authorId={document.authorId}
         title={document.title}
+        description={document.description}
+        createdAt={document._creationTime}
       />
       <div
         role="button"

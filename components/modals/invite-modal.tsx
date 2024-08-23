@@ -1,25 +1,8 @@
 "use client";
 
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "../ui/dialog";
-
-import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-} from "../ui/drawer";
-import { useEffect, useState } from "react";
+import { Dialog, DialogContent } from "../ui/dialog";
+import { Drawer, DrawerContent, DrawerFooter } from "../ui/drawer";
+import { useState } from "react";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { useApiMutation } from "@/hooks/use-api-mutation";
@@ -29,34 +12,13 @@ import { useMobile } from "@/hooks/use-mobile";
 import { useInviteModal } from "@/store/use-invite-modal";
 import { Id } from "@/convex/_generated/dataModel";
 import { Textarea } from "../ui/textarea";
-import { Form, FormDescription } from "../ui/form";
-import { useMutation, useQuery } from "convex/react";
 import { CircleCheck, CircleX } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useQuery } from "convex/react";
 
 export const InviteModal = () => {
   const isMobile = useMobile();
-  const { isOpen, onClose, documentId } = useInviteModal((state) => state);
-  const [message, setMessage] = useState("");
-  const [email, setEmail] = useState("");
-  const { mutate, pending } = useApiMutation(api.invitations.inviteAuthor);
-
-  const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.stopPropagation();
-    event.preventDefault();
-    const promise = mutate({
-      documentId: documentId,
-      email,
-    }).then(() => {
-      onClose();
-    });
-
-    toast.promise(promise, {
-      success: "Board renamed",
-      loading: "Renaming board",
-      error: "Failed to rename board",
-    });
-  };
+  const { isOpen, onClose } = useInviteModal((state) => state);
 
   if (isMobile) {
     return (

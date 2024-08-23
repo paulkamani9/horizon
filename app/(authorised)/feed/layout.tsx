@@ -1,4 +1,4 @@
-import { PageWrapper } from "../_components/page-wrapper";
+import { PageWrapper } from "../_components/wrapper";
 import { Header } from "./_components/header";
 
 interface FeedLayoutProps {
@@ -9,7 +9,7 @@ const FeedLayout = ({ children }: FeedLayoutProps) => {
   return (
     <div className="h-full w-full px-2">
       <Header />
-      <PageWrapper>{children}</PageWrapper>
+      <PageWrapper size="compact">{children}</PageWrapper>
     </div>
   );
 };

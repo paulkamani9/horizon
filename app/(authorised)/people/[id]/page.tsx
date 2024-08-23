@@ -1,5 +1,5 @@
 import { DocumentsList } from "../../_components/documents/documents-list";
-import { PageWrapper } from "../../_components/page-wrapper";
+import { PageWrapper } from "../../_components/wrapper";
 import Header from "./_components/header";
 
 interface UserPageProps {

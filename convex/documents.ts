@@ -2,7 +2,6 @@ import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { getCurrentUserOrThrow } from "./users";
 import { Id } from "./_generated/dataModel";
-import { FilterBuilder } from "convex/server";
 
 export const createDocument = mutation({
   args: {
@@ -11,12 +10,16 @@ export const createDocument = mutation({
   handler: async (ctx, { title }) => {
     const { externalId } = await getCurrentUserOrThrow(ctx);
 
-    await ctx.db.insert("documents", {
+    const newDocument = await ctx.db.insert("documents", {
       title,
       icon: "😎",
       authorId: externalId,
       isPublic: false,
-    });
+    })
+
+    
+
+    return newDocument;
   },
 });
 
@@ -89,13 +92,21 @@ export const deleteMyDocument = mutation({
     }
 
     // Fetch related invitations and collaborations
-    const [invitations, collaborations] = await Promise.all([
+    const [invitations, collaborations, stars, views] = await Promise.all([
       ctx.db
         .query("invitations")
         .withIndex("byDocumentId", (q) => q.eq("documentId", documentId))
         .collect(),
       ctx.db
         .query("collaboration")
+        .withIndex("byDocumentId", (q) => q.eq("documentId", documentId))
+        .collect(),
+      ctx.db
+        .query("stars")
+        .withIndex("byDocumentId", (q) => q.eq("documentId", documentId))
+        .collect(),
+      ctx.db
+        .query("views")
         .withIndex("byDocumentId", (q) => q.eq("documentId", documentId))
         .collect(),
     ]);
@@ -105,11 +116,15 @@ export const deleteMyDocument = mutation({
     const collaborationIds = collaborations.map(
       (collaboration) => collaboration._id
     );
+    const starsId = stars.map((star) => star._id);
+    const viewsId = views.map((view) => view._id);
 
     // Perform deletions in parallel
     await Promise.all([
       ...invitationIds.map((id) => ctx.db.delete(id)),
       ...collaborationIds.map((id) => ctx.db.delete(id)),
+      ...starsId.map((id) => ctx.db.delete(id)),
+      ...viewsId.map((id) => ctx.db.delete(id)),
       ctx.db.delete(existingDocument._id),
     ]);
   },
@@ -166,6 +181,25 @@ export const changeMyDocumentIcon = mutation({
 
     await ctx.db.patch(existingDocument._id, {
       icon: newIcon,
+    });
+  },
+});
+
+export const updateDocumentDescription = mutation({
+  args: {
+    documentId: v.id("documents"),
+    description: v.optional(v.string()),
+  },
+  handler: async (ctx, { documentId, description }) => {
+    const { externalId } = await getCurrentUserOrThrow(ctx);
+
+    const document = await ctx.db.get(documentId);
+    if (document === null || document.authorId !== externalId) {
+      return null;
+    }
+
+    await ctx.db.patch(documentId, {
+      description,
     });
   },
 });

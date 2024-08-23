@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from "@/components/ui/card";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { useQuery } from "convex/react";
@@ -13,7 +8,7 @@ import Image from "next/image";
 import { AcceptOrReject } from "./accept-or-reject";
 import Link from "next/link";
 import { MessageCircle } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface InvitationCardProps {
   message?: string | undefined;
@@ -41,7 +36,11 @@ export const InvitationCard = ({
     document === undefined ||
     collaborationInfo === undefined
   ) {
-    return <p>Fetching owner...</p>;
+    return (
+      <div className="w-full flex flex-col items-center">
+        <InvitationCardsSkeleton />
+      </div>
+    );
   }
 
   const otherCollaborators = collaborationInfo.filter(
@@ -95,7 +94,8 @@ export const InvitationCard = ({
                         {collaborator.name}
                       </span>
                     </Link>
-                  ))}.
+                  ))}
+                  .
                 </>
               )}
             </div>
@@ -117,4 +117,8 @@ export const InvitationCard = ({
       </CardFooter>
     </Card>
   );
+};
+
+export const InvitationCardsSkeleton = () => {
+  return <Skeleton className="w-full max-w-xl h-40" />;
 };

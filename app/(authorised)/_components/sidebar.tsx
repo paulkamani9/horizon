@@ -13,10 +13,11 @@ export const Sidebar = () => {
   const { user } = useUser();
   const { isOpen } = useSidebar();
   const isMobile = useMobile();
+  
   return (
     <aside
       className={cn(
-        "xl:w-[300px] w-[250px] top-0 left-0 absolute bg-[--light-bg2] dark:bg-[--dark-bg2] h-full z-50 transition-transform",
+        "xl:w-[300px] w-[250px] top-0 left-0 absolute drop-shadow-sm  bg-[--light-bg2] dark:bg-[--dark-bg2] h-full z-50 transition-transform",
         !isOpen && isMobile && "-translate-x-full",
         isMobile && isOpen && "w-[250px]"
       )}
@@ -42,7 +43,6 @@ export const Sidebar = () => {
           </nav>
           <div className="w-full flex py-7 items-center justify-start pl-6 border-t border-black dark:border-white gap-6 ">
             <UserButton />
-            <span>{user?.fullName}</span>
           </div>
         </div>
       </div>

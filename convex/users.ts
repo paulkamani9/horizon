@@ -138,7 +138,10 @@ export const getAnotherUser = query({
       .withIndex("byExternalId", (q) => q.eq("externalId", externalId))
       .unique();
 
+    if (!user) {
+      return null;
+    }
+
     return user;
   },
 });
-

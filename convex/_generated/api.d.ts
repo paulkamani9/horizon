@@ -19,6 +19,7 @@ import type * as documents from "../documents.js";
 import type * as followership from "../followership.js";
 import type * as http from "../http.js";
 import type * as invitations from "../invitations.js";
+import type * as messages from "../messages.js";
 import type * as stars from "../stars.js";
 import type * as tags from "../tags.js";
 import type * as users from "../users.js";
@@ -38,6 +39,7 @@ declare const fullApi: ApiFromModules<{
   followership: typeof followership;
   http: typeof http;
   invitations: typeof invitations;
+  messages: typeof messages;
   stars: typeof stars;
   tags: typeof tags;
   users: typeof users;

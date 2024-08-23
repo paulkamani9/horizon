@@ -1,12 +1,9 @@
-import { EmptyState } from "../_components/empty-state";
+import { MessagesList } from "./_components/messages-list";
 
 const MessagesPage = () => {
   return (
-    <div className="h-full w-full">
-      <EmptyState
-        message="I am the master of my inbox."
-        imageSrc="/message-clear.png"
-      />
+    <div className="h-full w-full flex flex-col items-center">
+      <MessagesList />
     </div>
   );
 };

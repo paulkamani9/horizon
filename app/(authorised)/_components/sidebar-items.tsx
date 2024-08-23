@@ -27,7 +27,7 @@ export const SidebarItem = ({ name, link, Icon }: SidebarItemProps) => {
         }}
         className={cn(
           "pl-6 flex items-center py-4 w-full hover:bg-[--light-bg] hover:dark:bg-[--dark-bg] cursor-pointer",
-          pathname === link && "bg-[--light-bg] dark:bg-[--dark-bg]"
+          pathname === link && "bg-[--light-bg] dark:bg-[--dark-bg] border-r"
         )}
       >
         <Icon className="mr-4 xl:w-6 xl:h-6 h-5 w-5 " />

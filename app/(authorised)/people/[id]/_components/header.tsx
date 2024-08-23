@@ -1,12 +1,13 @@
 "use client";
 
-import { HeaderWrapper } from "@/app/(authorised)/_components/header-wrapper";
+import { HeaderWrapper } from "@/app/(authorised)/_components/wrapper";
 import { api } from "@/convex/_generated/api";
 import { useQuery } from "convex/react";
 import Image from "next/image";
 import { UserCounts } from "../../_components/user-counts";
 import { Skeleton } from "@/components/ui/skeleton";
 import { FollowAndMessage } from "@/app/(authorised)/_components/follow-and-message";
+
 interface HeaderProps {
   id: string;
 }
@@ -28,7 +29,7 @@ const Header = ({ id }: HeaderProps) => {
             <div className="pl-2 opacity-80">
               <UserCounts id={id} />
             </div>
-            <FollowAndMessage id={id} />
+            <FollowAndMessage id={id} email={user.email} name={user.name} />
           </div>
         </div>
       </div>

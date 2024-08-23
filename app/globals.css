@@ -8,6 +8,9 @@ body {
   height: 100%;
 }
 
+
+
+
 @layer base {
   :root {
     --light-bg: #f3f4f6;

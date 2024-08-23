@@ -2,13 +2,21 @@
 import { api } from "@/convex/_generated/api";
 import { useApiMutation } from "@/hooks/use-api-mutation";
 import { Plus } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 export const NewButton = () => {
+  const router = useRouter();
   const { mutate, pending } = useApiMutation(api.documents.createDocument);
 
   const onCreateDocument = () => {
-    const promise = mutate({ title: "New document" });
+    const promise = mutate({ title: "New document" })
+      .then((document) => {
+        router.push(`/documents/${document}`);
+      })
+      .catch(() => {
+        return null;
+      });
 
     toast.promise(promise, {
       success: "Success! New document created.",

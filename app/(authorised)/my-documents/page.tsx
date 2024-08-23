@@ -1,5 +1,5 @@
 import { DocumentsList } from "../_components/documents/documents-list";
-import { PageWrapper } from "../_components/page-wrapper";
+import { PageWrapper } from "../_components/wrapper";
 import { Header } from "./_components.tsx/header";
 
 const MyDocumentsPage = () => {
@@ -7,7 +7,7 @@ const MyDocumentsPage = () => {
     <section className="w-full h-full px-2">
       <Header />
       <PageWrapper>
-        <DocumentsList  />
+        <DocumentsList />
       </PageWrapper>
     </section>
   );

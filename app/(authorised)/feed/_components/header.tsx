@@ -1,12 +1,12 @@
 "use client";
 import { usePathname } from "next/navigation";
-import { HeaderWrapper } from "../../_components/header-wrapper";
+import { HeaderWrapper } from "../../_components/wrapper";
 import { HeaderItems } from "./header-items";
 
 export const Header = () => {
   const pathname = usePathname();
   return (
-    <HeaderWrapper>
+    <HeaderWrapper size="compact">
       <div className="w-full h-full flex items-center justify-between">
         <h1 className="text-xl font-semibold">
           {pathname === "/feed" && "General"}

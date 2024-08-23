@@ -1,7 +1,7 @@
 "use client";
 import { NewButton } from "../../_components/new-button";
 import { useMobile } from "@/hooks/use-mobile";
-import { HeaderWrapper } from "../../_components/header-wrapper";
+import { HeaderWrapper } from "../../_components/wrapper";
 import { UserCounts } from "../../people/_components/user-counts";
 import { useUser } from "@clerk/nextjs";
 import { Skeleton } from "@/components/ui/skeleton";

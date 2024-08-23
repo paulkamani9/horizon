@@ -24,7 +24,7 @@ export default function RootLayout({
       <body
         className={cn(
           font.className,
-          "antialiased bg-[--light-bg] dark:bg-[--dark-bg2] text-black dark:text-white"
+          "antialiased bg-[--light-bg] dark:bg-[--dark-bg2] text-black dark:text-white "
         )}
       >
         <ClerkConvexProvider>
@@ -36,7 +36,7 @@ export default function RootLayout({
           >
             {children}
             <Toaster position="bottom-center" />
-           <ModalProvider />
+            <ModalProvider />
           </ThemeProvider>
         </ClerkConvexProvider>
       </body>

@@ -18,6 +18,8 @@ interface EditBarProps {
   documentId: Id<"documents">;
   authorId: string;
   title: string;
+  description?: string;
+  createdAt: number;
 }
 
 export const EditBar = ({
@@ -26,6 +28,8 @@ export const EditBar = ({
   documentId,
   title,
   authorId,
+  description,
+  createdAt,
 }: EditBarProps) => {
   const { isOpen } = useEditBar();
   const isPC = usePC();
@@ -57,7 +61,12 @@ export const EditBar = ({
         >
           <Tags documentId={documentId} />
         </div>
-        <DocumentInformation role="owner" />
+        <DocumentInformation
+          role={role}
+          description={description}
+          documentId={documentId}
+          createdAt={createdAt}
+        />
       </div>
     </div>
   );

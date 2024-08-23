@@ -1,6 +1,7 @@
 "use client";
 
 import { InviteModal } from "@/components/modals/invite-modal";
+import { MessageModal } from "@/components/modals/message-modal";
 import { RenameModal } from "@/components/modals/rename-modal";
 import { useEffect, useState } from "react";
 
@@ -18,6 +19,7 @@ export const ModalProvider = () => {
     <>
       <RenameModal />
       <InviteModal />
+      <MessageModal />
     </>
   );
 };

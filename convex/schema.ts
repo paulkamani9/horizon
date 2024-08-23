@@ -75,5 +75,12 @@ export default defineSchema({
     viewerId: v.string(),
   })
     .index("byDocumentId", ["documentId"])
-    .index("byDocumentIdAndViewerId", ["documentId", "viewerId"]), // add indexes if necessary
+    .index("byDocumentIdAndViewerId", ["documentId", "viewerId"]),
+  messages: defineTable({
+    senderId: v.string(),
+    receiverId: v.string(),
+    title: v.optional(v.string()),
+    body: v.string(),
+    parentMessageId: v.optional(v.id("messages")),
+  }).index("byReceiverId", ["receiverId"]),
 });
