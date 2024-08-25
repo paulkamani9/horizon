@@ -10,10 +10,10 @@ import { SidebarItem } from "./sidebar-items";
 import { NewButton } from "./new-button";
 
 export const Sidebar = () => {
-  const { user } = useUser();
   const { isOpen } = useSidebar();
   const isMobile = useMobile();
-  
+  const { user } = useUser();
+
   return (
     <aside
       className={cn(
@@ -43,6 +43,7 @@ export const Sidebar = () => {
           </nav>
           <div className="w-full flex py-7 items-center justify-start pl-6 border-t border-black dark:border-white gap-6 ">
             <UserButton />
+            <p className="text-xs">{user ? user.fullName : "...."}</p>
           </div>
         </div>
       </div>

@@ -1,4 +1,9 @@
-import { internalMutation, query, QueryCtx } from "./_generated/server";
+import {
+  internalMutation,
+  mutation,
+  query,
+  QueryCtx,
+} from "./_generated/server";
 import { UserJSON } from "@clerk/backend";
 import { v, Validator } from "convex/values";
 
@@ -113,6 +118,37 @@ async function userByExternalId(ctx: QueryCtx, externalId: string) {
     .withIndex("byExternalId", (q) => q.eq("externalId", externalId))
     .unique();
 }
+
+export const getMyData = query({
+  handler: async (ctx) => {
+    const me = await getCurrentUserOrThrow(ctx);
+
+    return me;
+  },
+});
+
+export const updateMyInformation = mutation({
+  args: {
+    name: v.optional(v.string()),
+    imageUrl: v.optional(v.string()),
+  },
+  handler: async (ctx, { name, imageUrl }) => {
+    const me = await getCurrentUserOrThrow(ctx);
+
+    if (name) {
+      return await ctx.db.patch(me._id, {
+        name,
+      });
+    }
+    if (imageUrl) {
+      return await ctx.db.patch(me._id, {
+        image: imageUrl,
+      });
+    }
+
+    return null;
+  },
+});
 
 export const getAllUsers = query({
   handler: async (ctx) => {

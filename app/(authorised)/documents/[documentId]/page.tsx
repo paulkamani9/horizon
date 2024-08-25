@@ -1,8 +1,6 @@
-import { useInviteModal } from "@/store/use-invite-modal"
+//unused page
 
 const DocumentPage = () => {
-  return (
-    <div>DocumentPage</div>
-  )
-}
-export default DocumentPage
+  return <div>DocumentPage</div>;
+};
+export default DocumentPage;

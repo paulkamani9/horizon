@@ -1,5 +1,7 @@
 "use client";
 
+import { ChangeProfilePicture } from "@/components/modals/change-profilePicture";
+import { ChangeNameModal } from "@/components/modals/changeName-modal";
 import { InviteModal } from "@/components/modals/invite-modal";
 import { MessageModal } from "@/components/modals/message-modal";
 import { RenameModal } from "@/components/modals/rename-modal";
@@ -20,6 +22,8 @@ export const ModalProvider = () => {
       <RenameModal />
       <InviteModal />
       <MessageModal />
+      <ChangeProfilePicture />
+      <ChangeNameModal />
     </>
   );
 };

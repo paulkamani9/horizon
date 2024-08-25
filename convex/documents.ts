@@ -15,9 +15,7 @@ export const createDocument = mutation({
       icon: "😎",
       authorId: externalId,
       isPublic: false,
-    })
-
-    
+    });
 
     return newDocument;
   },
@@ -42,17 +40,20 @@ export const getMyDocuments = query({
       ctx.db
         .query("documents")
         .withIndex("byAuthorId", (q) => q.eq("authorId", externalId))
+        .order("desc")
         .collect(),
       ctx.db
         .query("collaboration")
         .withIndex("byCollaboratorId", (q) =>
           q.eq("collaboratorId", externalId)
         )
+        .order("desc")
         .collect(),
       ctx.db
         .query("invitations")
         .withIndex("byInvitedId", (q) => q.eq("invitedId", externalId))
         .filter((q) => q.neq(q.field("isDenied"), true))
+        .order("desc")
         .collect(),
     ]);
 
@@ -181,6 +182,39 @@ export const changeMyDocumentIcon = mutation({
 
     await ctx.db.patch(existingDocument._id, {
       icon: newIcon,
+    });
+  },
+});
+
+export const updateDocumentContent = mutation({
+  args: {
+    documentId: v.id("documents"),
+    content: v.optional(v.string()),
+  },
+  handler: async (ctx, { documentId, content }) => {
+    const [{ externalId }, document] = await Promise.all([
+      getCurrentUserOrThrow(ctx),
+      ctx.db.get(documentId),
+    ]);
+
+    if (!document) {
+      return null;
+    }
+
+    if (document.authorId !== externalId) {
+      const collaborator = await ctx.db
+        .query("collaboration")
+        .withIndex("byDocumentIdAndCollaboratorId", (q) =>
+          q.eq("documentId", documentId).eq("collaboratorId", externalId)
+        )
+        .unique();
+
+      if (!collaborator) {
+        return null;
+      }
+    }
+    await ctx.db.patch(documentId, {
+      content,
     });
   },
 });

@@ -39,6 +39,7 @@ export const DocumentsList = () => {
             icon={document.icon}
             authorId={document.authorId}
             isPublic={document.isPublic}
+            content={document.content}
           />
         ))}
       </div>
@@ -74,6 +75,7 @@ export const DocumentsList = () => {
           icon={document.icon}
           authorId={document.authorId}
           isPublic={document.isPublic}
+          content={document.content}
         />
       ))}
     </div>

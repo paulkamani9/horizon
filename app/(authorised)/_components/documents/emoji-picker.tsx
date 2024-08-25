@@ -16,10 +16,15 @@ import { api } from "@/convex/_generated/api";
 interface IconPickerProps {
   documentId: Id<"documents">;
   children: React.ReactNode;
+  isDropdown?: boolean;
 }
-export const IconPicker = ({ documentId, children }: IconPickerProps) => {
+export const IconPicker = ({
+  documentId,
+  children,
+  isDropdown,
+}: IconPickerProps) => {
   const changeIcon = useMutation(api.documents.changeMyDocumentIcon);
-  const { toClose } = useEmojiPicker();
+  const { toClose, open, toOpen } = useEmojiPicker();
 
   const onChange = (icon: string) => {
     const promise = changeIcon({ icon, documentId });
@@ -32,7 +37,6 @@ export const IconPicker = ({ documentId, children }: IconPickerProps) => {
     });
   };
 
-  const { open, toOpen } = useEmojiPicker();
   const { resolvedTheme } = useTheme();
   const themeMap = {
     dark: Theme.DARK,
@@ -42,11 +46,30 @@ export const IconPicker = ({ documentId, children }: IconPickerProps) => {
   const currentTheme = (resolvedTheme || "light") as keyof typeof themeMap;
   const theme = themeMap[currentTheme];
 
+  if (isDropdown) {
+    return (
+      <Popover open={open}>
+        <PopoverTrigger onClick={toOpen}>{children}</PopoverTrigger>
+        <PopoverContent className="p-0 w-full border-none shadow-none">
+          <EmojiPicker
+            className="absolute bottom-2"
+            height={350}
+            theme={theme}
+            onEmojiClick={(data, e) => {
+              onChange(data.emoji);
+            }}
+          />
+        </PopoverContent>
+      </Popover>
+    );
+  }
+
   return (
-    <Popover open={open}>
+    <Popover>
       <PopoverTrigger onClick={toOpen}>{children}</PopoverTrigger>
       <PopoverContent className="p-0 w-full border-none shadow-none">
         <EmojiPicker
+          open={open}
           className="absolute bottom-2"
           height={350}
           theme={theme}

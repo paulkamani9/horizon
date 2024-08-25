@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/providers/theme-provider";
 import { Toaster } from "sonner";
 import { ModalProvider } from "@/providers/modal-provider";
+import { EdgeStoreProvider } from "@/utils/edgestore";
 
 const font = Inter({ subsets: ["latin"] });
 
@@ -28,16 +29,19 @@ export default function RootLayout({
         )}
       >
         <ClerkConvexProvider>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="dark"
-            enableSystem
-            disableTransitionOnChange
-          >
-            {children}
-            <Toaster position="bottom-center" />
-            <ModalProvider />
-          </ThemeProvider>
+          <EdgeStoreProvider>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="dark"
+              enableSystem
+              disableTransitionOnChange
+            >
+              {children}
+
+              <Toaster position="bottom-center" />
+              <ModalProvider />
+            </ThemeProvider>
+          </EdgeStoreProvider>
         </ClerkConvexProvider>
       </body>
     </html>

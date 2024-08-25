@@ -16,6 +16,7 @@ interface DocumentItemProps {
   icon?: string;
   authorId: string;
   isPublic: boolean;
+  content?: string;
 }
 
 export const DocumentItem = ({
@@ -24,6 +25,7 @@ export const DocumentItem = ({
   icon,
   authorId,
   isPublic,
+  content,
 }: DocumentItemProps) => {
   const { user } = useUser();
   const params = useParams();
@@ -38,7 +40,7 @@ export const DocumentItem = ({
             user?.id !== authorId && "hidden"
           )}
         >
-          <Actions documentId={documentId} title={title}>
+          <Actions documentId={documentId} title={title} content={content}>
             <MoreVertical />
           </Actions>
         </button>

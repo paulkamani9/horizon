@@ -6,6 +6,13 @@ import { useEditBar } from "@/store/use-edit-bar";
 import { ChevronLeft } from "lucide-react";
 import { AcceptOrReject } from "../../feed/invitations/_components/accept-or-reject";
 import { Skeleton } from "@/components/ui/skeleton";
+import { IconPicker } from "../../_components/documents/emoji-picker";
+import TextAreaAutoSize from "react-textarea-autosize";
+
+import React, { ElementRef, useRef, useState } from "react";
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { HoverCardWrapper } from "../../_components/hover-card-wrapper";
 
 interface HeaderProps {
   documentId: Id<"documents">;
@@ -16,13 +23,73 @@ interface HeaderProps {
 
 export const Header = ({ documentId, role, icon, title }: HeaderProps) => {
   const { onClose, isOpen, onOpen } = useEditBar();
+  const inputRef = useRef<ElementRef<"textarea">>(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [value, setValue] = useState(title);
+  const updateTitle = useMutation(api.documents.renameMyDocument);
+
+  const enableInput: React.MouseEventHandler<HTMLParagraphElement> = (e) => {
+    e.preventDefault();
+    if (role !== "owner") return;
+
+    setIsEditing(true);
+    setTimeout(() => {
+      setValue(title);
+      inputRef.current?.focus();
+    }),
+      0;
+  };
+
+  const disableInput = () => {
+    setIsEditing(false);
+  };
+
+  const onInput = (value: string) => {
+    setValue(value);
+    updateTitle({
+      documentId,
+      title: value || "nully nully",
+    });
+  };
+
+  const onKeyDown:
+    | React.KeyboardEventHandler<HTMLTextAreaElement>
+    | undefined = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      disableInput();
+    }
+  };
 
   return (
     <div className="w-full xl:w-[calc(100%-256px)] h-24 flex flex-col">
       <div className="flex items-center justify-between flex-1">
-        <div className="flex items-center gap-1">
-          <span className="text-xl">{icon}</span>
-          <p className="truncate text-[18px]  lg:text-xl font-semibold">
+        <div className="flex items-center gap-1 truncate w-full max-w-[90%]">
+          {role === "owner" && (
+            <IconPicker documentId={documentId}>
+              <span className="text-xl hover:text-2xl">{icon}</span>
+            </IconPicker>
+          )}
+          <span className={cn("text-xl", role === "owner" && "hidden")}>
+            {icon}
+          </span>
+          {isEditing && role === "owner" && (
+            <TextAreaAutoSize
+              ref={inputRef}
+              onKeyDown={onKeyDown}
+              onBlur={disableInput}
+              value={value}
+              onChange={(e) => onInput(e.target.value)}
+              className="bg-transparent font-semibold break-words outline-none w-full text-[#3f3f3f] dark:text-[#cfcfcf] resize-none"
+            />
+          )}
+          <p
+            className={cn(
+              "truncate lg:text-xl font-bold text-xl",
+              isEditing && role === "owner" && "hidden"
+            )}
+            onDoubleClick={enableInput}
+          >
             {title}
           </p>
         </div>

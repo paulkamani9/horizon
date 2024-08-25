@@ -14,21 +14,37 @@ import { api } from "@/convex/_generated/api";
 import { useRenameModal } from "@/store/use-rename-modal";
 import { IconPicker } from "./emoji-picker";
 import { Id } from "@/convex/_generated/dataModel";
-
+import { PartialBlock } from "@blocknote/core";
+import { extractFileUrls } from "@/lib/extract-file-urls";
+import { useEdgeStore } from "@/utils/edgestore";
 
 interface ActionsProps {
   children: React.ReactNode;
   title: string;
   documentId: Id<"documents">;
+  content?: string;
 }
 
-export const Actions = ({ children, title, documentId }: ActionsProps) => {
+export const Actions = ({
+  children,
+  title,
+  documentId,
+  content,
+}: ActionsProps) => {
+  const { edgestore } = useEdgeStore();
   const { onOpen } = useRenameModal();
   const { mutate: deleteMyDocumentMutation } = useApiMutation(
     api.documents.deleteMyDocument
   );
 
   const onDeleteMyDocument = () => {
+    if (content) {
+      const existingBlocks: PartialBlock[] = JSON.parse(content);
+      const fileUrls = extractFileUrls(existingBlocks);
+      fileUrls.map(async (url) => {
+        await edgestore.publicFiles.delete({ url });
+      });
+    }
     deleteMyDocumentMutation({ documentId });
   };
 
@@ -47,7 +63,7 @@ export const Actions = ({ children, title, documentId }: ActionsProps) => {
         </DropdownMenuItem>
 
         <DropdownMenuItem>
-          <IconPicker documentId={documentId}>
+          <IconPicker documentId={documentId} isDropdown={true}>
             <div
               onClick={(e) => {
                 e.preventDefault();

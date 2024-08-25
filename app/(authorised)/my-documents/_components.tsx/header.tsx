@@ -5,10 +5,12 @@ import { HeaderWrapper } from "../../_components/wrapper";
 import { UserCounts } from "../../people/_components/user-counts";
 import { useUser } from "@clerk/nextjs";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
 
 export const Header = () => {
   const isMobile = useMobile();
-  const { user } = useUser();
+  const user = useQuery(api.users.getMyData);
 
   if (user === undefined) {
     return (
@@ -30,8 +32,8 @@ export const Header = () => {
       <HeaderWrapper>
         <div className="w-full h-full flex  items-center justify-between">
           <div className="flex flex-col gap-2">
-            <span className="text-xl font-semibold">{user?.fullName!}</span>
-            <UserCounts id={user?.id!} large={true} />
+            <span className="text-xl font-semibold">{user.name}</span>
+            <UserCounts id={user.externalId} large={true} />
           </div>
           <div className="md:hidden inline-flex">
             <NewButton />
@@ -44,10 +46,9 @@ export const Header = () => {
   return (
     <HeaderWrapper>
       <div className="flex flex-col gap-2">
-        <span className="text-2xl font-semibold">{user?.fullName!}</span>
-        <UserCounts large={true} id={user?.id!} />
+        <span className="text-2xl font-semibold">{user.name}</span>
+        <UserCounts large={true} id={user.externalId} />
       </div>
     </HeaderWrapper>
   );
 };
-

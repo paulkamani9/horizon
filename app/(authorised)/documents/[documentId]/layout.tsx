@@ -8,6 +8,7 @@ import { useParams } from "next/navigation";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
+import { DocumentEditor } from "./_components/DocumentEditor";
 
 interface DocumentLayoutProps {
   children: React.ReactNode;
@@ -50,13 +51,14 @@ const DocumentLayout = ({ children }: DocumentLayoutProps) => {
           onClose();
         }}
         className={cn(
-          "fixed bg-transparent h-full w-full top-0 left-0",
+          "fixed h-full w-full top-0 left-0",
           isPC && "hidden",
           !isOpen && "hidden"
         )}
       />
-      <div className="mt-4 w-full xl:w-[calc(100%-288px)]  h-[calc(100%-112px)] ">
-        {children}
+      <div className="mt-4 w-full xl:w-[calc(100%-288px)]  h-[calc(100%-112px)] overflow-auto">
+        <DocumentEditor {...document} />
+        {/* {children} */}
       </div>
     </div>
   );

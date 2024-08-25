@@ -14,6 +14,7 @@ interface DocumentInformationProps {
   documentId: Id<"documents">;
   description?: string;
   createdAt: number;
+  title?:string;
 }
 
 export const DocumentInformation = ({
@@ -21,6 +22,7 @@ export const DocumentInformation = ({
   documentId,
   description,
   createdAt,
+  title
 }: DocumentInformationProps) => {
   const [desc, setDesc] = useState<string | undefined>(description);
   const updateDescription = useMutation(

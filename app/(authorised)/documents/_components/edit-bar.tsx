@@ -36,12 +36,12 @@ export const EditBar = ({
   return (
     <div
       className={cn(
-        "fixed right-0  h-[calc(100%-226px)] w-72 transition-transform z-[55]",
+        "fixed right-0  h-[calc(100%-226px)] w-72 transition-transform z-[55] bg-[--light-bg2] dark:bg-[--dark-bg]",
         !isPC && !isOpen && "translate-x-full"
       )}
     >
       <div className="w-full h-full border-t border-l flex flex-col gap-8 border-white pl-4 pr-4 md:pr-2 py-2 overflow-y-auto pb-20">
-        <PublicInformation isPublic={isPublic} />
+        <PublicInformation isPublic={isPublic} title={title}/>
         <StarButton
           isPublic={isPublic}
           documentId={documentId}
@@ -66,6 +66,7 @@ export const EditBar = ({
           description={description}
           documentId={documentId}
           createdAt={createdAt}
+          title={title}
         />
       </div>
     </div>
