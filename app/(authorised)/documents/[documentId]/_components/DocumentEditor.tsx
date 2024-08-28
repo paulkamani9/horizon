@@ -1,13 +1,20 @@
 "use client";
 
-
 import dynamic from "next/dynamic";
 import { Id } from "@/convex/_generated/dataModel";
-import { useMemo } from "react";
-import { useMutation } from "convex/react";
+import {  useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import {
+  LiveblocksProvider,
+  RoomProvider,
+  ClientSideSuspense,
+} from "@liveblocks/react/suspense";
+import PublicEditor from "@/components/public-editor";
+import { DocumentPageSkeleton } from "./document-page-skeleton";
 
-const Editor = dynamic(() => import("@/components/BlockNoteEditor"), { ssr: false });
+const PrivateEditor = dynamic(() => import("@/components/private-editor"), {
+  ssr: false,
+});
 
 interface DocumentEditorProps {
   role: string;
@@ -19,27 +26,44 @@ interface DocumentEditorProps {
   title: string;
   authorId: string;
   isPublic: boolean;
+  authorName: string;
 }
 
 export const DocumentEditor = ({ _id, role, content }: DocumentEditorProps) => {
+  const me = useQuery(api.users.getMyData);
 
-  const updateContent = useMutation(api.documents.updateDocumentContent);
-
-  const onChange = (content: string) => {
-    updateContent({ documentId: _id, content })
-  };
+  if (me === undefined) {
+    return <DocumentPageSkeleton />
+  }
 
   if (role !== "owner" && role !== "admin") {
     return (
       <div className="w-full border py-2  bg-card text-card-foreground shadow-sm min-h-full rounded-sm">
-        <Editor editable={false} content={content} onChange={() => {}} />
+        <PublicEditor content={content} />
       </div>
     );
   }
 
   return (
-    <div className="w-full border py-2 bg-card dark:bg-slate-950 shadow-md min-h-[850px] rounded-sm ">
-      <Editor editable={true} content={content} onChange={onChange} />
-    </div>
+    <LiveblocksProvider
+      publicApiKey={
+        "pk_dev_J2b1b8xIu5YK-lOwY6bSWD1INzHcFjAmQ4Ed7beZYJCLMCeNhEs5VNYDoGxiw7rG"
+      }
+    >
+      <RoomProvider id={_id}>
+        <ClientSideSuspense fallback={<div>Loading…</div>}>
+          <div className="w-full border py-2 bg-card dark:bg-slate-950 shadow-md min-h-[850px] rounded-sm ">
+            <PrivateEditor
+              role={role === "owner" || role === "admin" ? true : false}
+              name={me.name}
+              content={content}
+              documentId={_id}
+            />
+          </div>
+        </ClientSideSuspense>
+      </RoomProvider>
+    </LiveblocksProvider>
   );
 };
+
+

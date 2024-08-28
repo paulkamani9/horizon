@@ -13,7 +13,12 @@ interface SidebarItemProps {
   Icon: ForwardRefExoticComponent<
     Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>
   >;
-  notificationCount?: number;
+  notificationCount?:
+    | number
+    | {
+        messagesCount: number;
+        invitationsCount: number;
+      }
 }
 
 export const SidebarItem = ({ name, link, Icon,notificationCount }: SidebarItemProps) => {
@@ -35,7 +40,7 @@ export const SidebarItem = ({ name, link, Icon,notificationCount }: SidebarItemP
         {!!notificationCount && (
           <div className="absolute bg-red-500 text-white rounded-[50%] p-1.5  group-hover:p-1 top-3 left-4 ">
             <span className="text-sm hidden group-hover:block">
-              {notificationCount}
+              {typeof notificationCount === "number"  && notificationCount} 
             </span>
           </div>
         )}

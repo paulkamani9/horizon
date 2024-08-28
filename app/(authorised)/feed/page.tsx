@@ -5,6 +5,7 @@ import { EmptyState } from "./_components/empty-state";
 import { api } from "@/convex/_generated/api";
 import { NotificationsItem } from "./_components/notifications-item";
 import { useEffect } from "react";
+import { FeedPageSkeleton } from "./_components/feed-page-skeleton";
 
 const FeedPage = () => {
   const clearGeneralNotifications = useMutation(
@@ -19,7 +20,7 @@ const FeedPage = () => {
   
   const notifications = useQuery(api.notifications.getNotifications);
   if (notifications === undefined) {
-    return <p>skeleton</p>;
+    return <FeedPageSkeleton />
   }
 
   if (notifications.length === 0) {

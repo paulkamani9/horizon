@@ -5,6 +5,8 @@ import { Id } from "@/convex/_generated/dataModel";
 import { useQuery } from "convex/react";
 import Image from "next/image";
 import Link from "next/link";
+import { FeedPageSkeleton } from "./feed-page-skeleton";
+import { EmptyState } from "./empty-state";
 
 interface NotificationsItemProps {
   _id: Id<"notifications">;
@@ -34,8 +36,8 @@ export const NotificationsItem = ({
     documentId: documentId as Id<"documents">,
   });
 
-  if (!user) {
-    return <p>inner skeleton</p>;
+  if (user === undefined || user === null) {
+    return <FeedPageSkeleton />;
   }
 
   return (
