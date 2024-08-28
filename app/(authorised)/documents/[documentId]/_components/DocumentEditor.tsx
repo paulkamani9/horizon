@@ -1,10 +1,13 @@
 "use client";
 
+
 import dynamic from "next/dynamic";
 import { Id } from "@/convex/_generated/dataModel";
 import { useMemo } from "react";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
+
+const Editor = dynamic(() => import("@/components/BlockNoteEditor"), { ssr: false });
 
 interface DocumentEditorProps {
   role: string;
@@ -19,15 +22,11 @@ interface DocumentEditorProps {
 }
 
 export const DocumentEditor = ({ _id, role, content }: DocumentEditorProps) => {
-  const Editor = useMemo(
-    () => dynamic(() => import("@/components/BlockNoteEditor"), { ssr: false }),
-    []
-  );
 
   const updateContent = useMutation(api.documents.updateDocumentContent);
 
   const onChange = (content: string) => {
-    updateContent({ documentId: _id, content });
+    updateContent({ documentId: _id, content })
   };
 
   if (role !== "owner" && role !== "admin") {
@@ -39,7 +38,7 @@ export const DocumentEditor = ({ _id, role, content }: DocumentEditorProps) => {
   }
 
   return (
-    <div className="w-full border py-2  bg-card text-card-foreground shadow-sm min-h-[90%] rounded-sm ">
+    <div className="w-full border py-2 bg-card dark:bg-slate-950 shadow-md min-h-[850px] rounded-sm ">
       <Editor editable={true} content={content} onChange={onChange} />
     </div>
   );

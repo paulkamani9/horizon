@@ -1,10 +1,9 @@
 "use client";
 
 import { Logo } from "@/components/Logo";
-import { cn } from "@/lib/utils";
 import { useSidebar } from "@/store/use-sidebar";
 import { Menu } from "lucide-react";
-import { SearchBar } from "./search-bar";
+import { SearchBar } from "./search/search-bar";
 import { NewButton } from "./new-button";
 
 export const Toolbar = () => {

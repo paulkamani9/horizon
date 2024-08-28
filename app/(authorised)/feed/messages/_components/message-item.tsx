@@ -43,7 +43,7 @@ export const MessageItem = ({
       <div className="flex py-5">
         <div className="pl-4 pr-2 flex flex-col items-center">
           <Link href={`/people/${sender.externalId}`} className="flex">
-            <div className="h-8 w-8 relative overflow-clip rounded-[50%]">
+            <div className="h-6 w-6 relative overflow-clip rounded-[50%]">
               <Image
                 src={sender.image}
                 alt={sender.name}

@@ -1,6 +1,34 @@
 import { v } from "convex/values";
-import { mutation, query } from "./_generated/server";
+import { mutation, query, QueryCtx } from "./_generated/server";
 import { getCurrentUserOrThrow } from "./users";
+
+export const getAllUserStars = async (ctx: QueryCtx, id: string) => {
+  const [userDocumentStars, collaborationStars] = await Promise.all([
+    ctx.db
+      .query("stars")
+      .withIndex("byOwnerId", (q) => q.eq("ownerId", id))
+      .collect(),
+    ctx.db
+      .query("collaboration")
+      .withIndex("byCollaboratorId", (q) => q.eq("collaboratorId", id))
+      .collect()
+      .then((collaborations) =>
+        Promise.all(
+          collaborations.map((collaboration) =>
+            ctx.db
+              .query("stars")
+              .withIndex("byDocumentId", (q) =>
+                q.eq("documentId", collaboration.documentId)
+              )
+              .order("desc")
+              .collect()
+          )
+        )
+      ),
+  ]);
+
+  return [...userDocumentStars, ...collaborationStars.flat()];
+};
 
 export const getDocumentStars = query({
   args: {
@@ -51,11 +79,41 @@ export const toggleStarDocument = mutation({
     if (isStar) {
       await ctx.db.delete(isStar._id);
     } else {
-      await ctx.db.insert("stars", {
-        documentId,
-        ownerId: document.authorId,
-        starerId: externalId,
-      });
+      await Promise.all([
+        ctx.db.insert("stars", {
+          documentId,
+          ownerId: document.authorId,
+          starerId: externalId,
+        }),
+
+        externalId === document.authorId
+          ? Promise.resolve()
+          : ctx.db.insert("notifications", {
+              type: "starGazing",
+              documentId,
+              notifiedId: document.authorId,
+              notifierId: externalId,
+              isSeen: false,
+            }),
+
+        ctx.db
+          .query("collaboration")
+          .withIndex("byDocumentId", (q) => q.eq("documentId", documentId))
+          .collect()
+          .then(async (collaborations) => {
+            await Promise.all(
+              collaborations.map((collaboration) =>
+                ctx.db.insert("notifications", {
+                  type: "starGazing",
+                  documentId,
+                  notifiedId: collaboration.collaboratorId,
+                  notifierId: externalId,
+                  isSeen: false,
+                })
+              )
+            );
+          }),
+      ]);
     }
   },
 });
@@ -68,33 +126,9 @@ export const getUserStars = query({
     try {
       await getCurrentUserOrThrow(ctx);
 
-      const [userDocumentStars, collaborationStars] = await Promise.all([
-        ctx.db
-          .query("stars")
-          .withIndex("byOwnerId", (q) => q.eq("ownerId", id))
-          .collect(),
-        ctx.db
-          .query("collaboration")
-          .withIndex("byCollaboratorId", (q) => q.eq("collaboratorId", id))
-          .collect()
-          .then((collaborations) =>
-            Promise.all(
-              collaborations.map((collaboration) =>
-                ctx.db
-                  .query("stars")
-                  .withIndex("byDocumentId", (q) =>
-                    q.eq("documentId", collaboration.documentId)
-                  )
-                  .collect()
-              )
-            )
-          ),
-      ]);
+      const allStars = await getAllUserStars(ctx, id);
 
-      const allStars =
-        userDocumentStars.length + collaborationStars.flat(Infinity).length;
-
-      return allStars;
+      return allStars.length;
     } catch (error) {
       return null;
     }

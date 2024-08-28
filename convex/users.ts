@@ -136,6 +136,19 @@ export const updateMyInformation = mutation({
     const me = await getCurrentUserOrThrow(ctx);
 
     if (name) {
+      await ctx.db
+        .query("documents")
+        .withIndex("byAuthorId", (q) => q.eq("authorId", me.externalId))
+        .collect()
+        .then(async (documents) => {
+          await Promise.all(
+            documents.map((document) =>
+              ctx.db.patch(document._id, {
+                authorName: name,
+              })
+            )
+          );
+        });
       return await ctx.db.patch(me._id, {
         name,
       });
@@ -151,8 +164,33 @@ export const updateMyInformation = mutation({
 });
 
 export const getAllUsers = query({
-  handler: async (ctx) => {
+  args: { search: v.optional(v.string()) },
+  handler: async (ctx, { search }) => {
     const { externalId } = await getCurrentUserOrThrow(ctx);
+
+    if (search) {
+      const usersByName = await ctx.db
+        .query("users")
+        .withSearchIndex("searchName", (q) => q.search("name", search))
+        .filter((q) => q.neq(q.field("externalId"), externalId))
+        .collect();
+
+      const usersByEmail = await ctx.db
+        .query("users")
+        .withSearchIndex("searchEmail", (q) => q.search("email", search))
+        .filter((q) => q.neq(q.field("externalId"), externalId))
+        .collect();
+
+      // Combine results, removing duplicates if necessary
+      const combinedResults = [...usersByName, ...usersByEmail];
+
+      // Optionally, remove duplicates based on a unique field (e.g., externalId)
+      const uniqueResults = Array.from(
+        new Map(combinedResults.map((user) => [user.externalId, user])).values()
+      );
+
+      return uniqueResults;
+    }
 
     const users = await ctx.db
       .query("users")

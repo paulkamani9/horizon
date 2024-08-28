@@ -20,18 +20,19 @@ export default function Home() {
         <Logo size="Icon" />
         <SignInButton
           mode="modal"
-          signUpFallbackRedirectUrl="/feed"
-          signUpForceRedirectUrl="/feed"
+          signUpFallbackRedirectUrl="/my-documents"
+          signUpForceRedirectUrl="/my-documents"
         >
           <button className="bg-blue-800 text-white flex items-center py-2 px-6 rounded-sm gap-2">
-            <span className="text-2xl ">Start</span>
-            <ArrowRight />
+            <span className="">Start</span>
+            <ArrowRight className="h-4 w-4"/>
           </button>
         </SignInButton>
       </main>
     );
   }
+
   if (!isLoading && isAuthenticated) {
-    router.push("/feed");
+    router.push("/my-documents");
   }
 }

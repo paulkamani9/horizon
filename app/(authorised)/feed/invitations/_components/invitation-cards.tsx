@@ -1,11 +1,22 @@
 "use client";
 
 import { api } from "@/convex/_generated/api";
-import { useQuery } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { InvitationCard, InvitationCardsSkeleton } from "./invitation-card";
 import { EmptyState } from "../../_components/empty-state";
+import { useEffect } from "react";
 
 export const InvitationCards = () => {
+  const clearInvitationsNotifications = useMutation(
+    api.notifications.clearNotifications
+  );
+
+  useEffect(() => {
+    clearInvitationsNotifications({
+      page: "invitations",
+    });
+  }, []);
+
   const invitations = useQuery(api.invitations.getAllMyInvitations);
 
   if (invitations === undefined) {

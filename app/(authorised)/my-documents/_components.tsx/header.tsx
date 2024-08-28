@@ -3,7 +3,6 @@ import { NewButton } from "../../_components/new-button";
 import { useMobile } from "@/hooks/use-mobile";
 import { HeaderWrapper } from "../../_components/wrapper";
 import { UserCounts } from "../../people/_components/user-counts";
-import { useUser } from "@clerk/nextjs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";

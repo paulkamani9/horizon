@@ -2,13 +2,14 @@
 
 import { BlockNoteEditor, PartialBlock } from "@blocknote/core";
 import { useCreateBlockNote } from "@blocknote/react";
-import { BlockNoteView, darkDefaultTheme, Theme } from "@blocknote/mantine";
+import {BlockNoteView} from "@blocknote/shadcn"
 import "@blocknote/core/fonts/inter.css";
-import "@blocknote/mantine/style.css";
+import "@blocknote/shadcn/style.css"
 import { useTheme } from "next-themes";
 import { useEdgeStore } from "@/utils/edgestore";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { extractFileUrls } from "@/lib/extract-file-urls";
+
 
 interface BlockNoteEditorProps {
   content?: string;
@@ -32,13 +33,13 @@ const Editor = ({ content, onChange, editable }: BlockNoteEditorProps) => {
       });
       return res.url;
     },
+    
   });
 
   const handleChange = () => {
     const currentContent = editor.document;
     const previousFiles = extractFileUrls(previousContent);
     const currentFiles = extractFileUrls(currentContent);
-
     const deletedFiles = previousFiles.filter(
       (url) => !currentFiles.includes(url)
     );
@@ -51,30 +52,17 @@ const Editor = ({ content, onChange, editable }: BlockNoteEditorProps) => {
       });
     }
     setPreviousContent(currentContent);
+    // const stringContent = contentExtractor(currentContent);
     onChange(JSON.stringify(currentContent));
   };
-
-  // Theme for dark mode, reusing the light theme with necessary changes
-  const blackTheme = {
-    colors: {
-      editor: {
-        text: "#ffffff", // Off-white for dark mode text
-        background: "#030712", // Dark blue-gray background
-        ...darkDefaultTheme,
-      },
-      ...darkDefaultTheme,
-    },
-  } satisfies Theme;
 
   return (
     <BlockNoteView
       editor={editor}
       editable={editable}
-      className=""
-      theme={resolvedTheme === "dark" ? blackTheme : "light"}
+      theme={resolvedTheme === "dark" ? "dark" : "light"}
       onChange={handleChange}
       formattingToolbar={true}
-      
     />
   );
 };

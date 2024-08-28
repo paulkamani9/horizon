@@ -8,12 +8,13 @@ export const createDocument = mutation({
     title: v.string(),
   },
   handler: async (ctx, { title }) => {
-    const { externalId } = await getCurrentUserOrThrow(ctx);
+    const user = await getCurrentUserOrThrow(ctx);
 
     const newDocument = await ctx.db.insert("documents", {
       title,
       icon: "😎",
-      authorId: externalId,
+      authorId: user.externalId,
+      authorName: user.name,
       isPublic: false,
     });
 
@@ -52,7 +53,6 @@ export const getMyDocuments = query({
       ctx.db
         .query("invitations")
         .withIndex("byInvitedId", (q) => q.eq("invitedId", externalId))
-        .filter((q) => q.neq(q.field("isDenied"), true))
         .order("desc")
         .collect(),
     ]);
@@ -215,6 +215,7 @@ export const updateDocumentContent = mutation({
     }
     await ctx.db.patch(documentId, {
       content,
+      // stringContent,
     });
   },
 });
@@ -255,9 +256,36 @@ export const toggleMyDocumentsPublicity = mutation({
       throw new Error("You are not the owner of this document");
     }
 
-    await ctx.db.patch(document._id, {
-      isPublic: !document.isPublic,
-    });
+    if (document.isPublic === true) {
+      await ctx.db.patch(document._id, {
+        isPublic: false,
+      });
+    } else {
+      await Promise.all([
+        ctx.db.patch(document._id, {
+          isPublic: true,
+        }),
+        ctx.db
+          .query("collaboration")
+          .withIndex("byDocumentId", (q) => q.eq("documentId", document._id))
+          .collect()
+          .then(async (collaborations) => {
+            await Promise.all(
+              collaborations.map((collaboration) =>
+                ctx.db.insert("notifications", {
+                  type: "publicity",
+                  documentId,
+                  notifiedId: collaboration.collaboratorId,
+                  notifierId: externalId,
+                  isSeen: false,
+                })
+              )
+            );
+          }),
+
+        // perhaphs all followers, should get a publicity notice as well
+      ]);
+    }
   },
 });
 
@@ -341,7 +369,6 @@ export const getAnotherUsersPublicDocuments = query({
       .withIndex("byOwnerIdAndInvitedId", (q) =>
         q.eq("ownerId", args.id).eq("invitedId", externalId)
       )
-      .filter((q) => q.neq(q.field("isDenied"), true))
       .collect()
       .then((invitations) =>
         Promise.all(
@@ -376,23 +403,35 @@ export const getAnotherUsersPublicDocuments = query({
 });
 
 export const checkRoleAndReturnDocument = query({
-  args: { documentId: v.id("documents") },
+  args: { documentId: v.optional(v.id("documents")) },
   handler: async (ctx, { documentId }) => {
+    if (!documentId) {
+      return null;
+    }
+
     const { externalId } = await getCurrentUserOrThrow(ctx);
 
     const document = await ctx.db.get(documentId);
 
     if (!document) {
-      throw new Error("Document not found");
+      return null;
     }
 
     if (document.authorId !== externalId) {
-      const collaboration = await ctx.db
-        .query("collaboration")
-        .withIndex("byDocumentIdAndCollaboratorId", (q) =>
-          q.eq("documentId", document._id).eq("collaboratorId", externalId)
-        )
-        .unique();
+      const [collaboration, invitation] = await Promise.all([
+        ctx.db
+          .query("collaboration")
+          .withIndex("byDocumentIdAndCollaboratorId", (q) =>
+            q.eq("documentId", document._id).eq("collaboratorId", externalId)
+          )
+          .unique(),
+        ctx.db
+          .query("invitations")
+          .withIndex("byDocumentIdAndInvitedId", (q) =>
+            q.eq("documentId", document._id).eq("invitedId", externalId)
+          )
+          .unique(),
+      ]);
 
       if (collaboration) {
         return {
@@ -400,14 +439,6 @@ export const checkRoleAndReturnDocument = query({
           role: "admin",
         };
       }
-
-      const invitation = await ctx.db
-        .query("invitations")
-        .withIndex("byDocumentIdAndInvitedId", (q) =>
-          q.eq("documentId", document._id).eq("invitedId", externalId)
-        )
-        .filter((q) => q.neq(q.field("isDenied"), true))
-        .unique();
 
       if (invitation) {
         return {
@@ -423,7 +454,7 @@ export const checkRoleAndReturnDocument = query({
         };
       }
 
-      throw new Error("You have no right to view this document.");
+      return null;
     }
 
     return {

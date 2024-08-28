@@ -46,7 +46,7 @@ const AuthorizedLayout = ({ children }: AuthorizedLayoutProps) => {
   }
 
   return (
-    <main  className="h-full  w-full bg-[--light-bg] dark:bg-[--dark-bg] flex flex-col relative">
+    <main className="h-full  w-full bg-[--light-bg] dark:bg-[--dark-bg] flex flex-col relative ">
       <Topper />
       <Toolbar />
       <div

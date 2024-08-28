@@ -34,12 +34,20 @@ export const checkAnotherUserByEmailAndInvitation = query({
       };
     }
 
-    const collaboration = await ctx.db
-      .query("collaboration")
-      .withIndex("byDocumentIdAndCollaboratorId", (q) =>
-        q.eq("documentId", documentId).eq("collaboratorId", user.externalId)
-      )
-      .unique();
+    const [collaboration, invitation] = await Promise.all([
+      ctx.db
+        .query("collaboration")
+        .withIndex("byDocumentIdAndCollaboratorId", (q) =>
+          q.eq("documentId", documentId).eq("collaboratorId", user.externalId)
+        )
+        .unique(),
+      ctx.db
+        .query("invitations")
+        .withIndex("byDocumentIdAndInvitedId", (q) =>
+          q.eq("documentId", documentId).eq("invitedId", user.externalId)
+        )
+        .unique(),
+    ]);
 
     if (collaboration) {
       return {
@@ -49,21 +57,7 @@ export const checkAnotherUserByEmailAndInvitation = query({
       };
     }
 
-    const invitation = await ctx.db
-      .query("invitations")
-      .withIndex("byDocumentIdAndInvitedId", (q) =>
-        q.eq("documentId", documentId).eq("invitedId", user.externalId)
-      )
-      .unique();
-
     if (invitation) {
-      if (invitation.isDenied) {
-        return {
-          isFound: false,
-          message: `Your invitation has already been denied by ${user.name}.`,
-          user: null,
-        };
-      }
       return {
         isFound: false,
         message: `You have already sent an invitation to this ${user.name}.`,
@@ -112,7 +106,7 @@ export const inviteAuthor = mutation({
       invitedId: invited.externalId,
       documentId: document._id,
       ownerId: externalId,
-      isDenied: false,
+      isSeen: false,
     });
   },
 });
@@ -125,7 +119,6 @@ export const getAllMyInvitations = query({
     const invitations = await ctx.db
       .query("invitations")
       .withIndex("byInvitedId", (q) => q.eq("invitedId", externalId))
-      .filter((q) => q.neq(q.field("isDenied"), true))
       .collect();
 
     return invitations;
@@ -161,22 +154,40 @@ export const acceptOrRejectInvitation = mutation({
       .unique();
 
     if (!invitation) {
-      throw new Error("Invitation not found at invitations");
+      return null;
     }
 
     if (!isAccept) {
-      await ctx.db.patch(invitation._id, {
-        isDenied: true,
-      });
+      await Promise.all([
+        await ctx.db.insert("notifications", {
+          notifiedId: invitation.ownerId,
+          notifierId: externalId,
+          type: "invitationReject",
+          documentId: documentId,
+          isSeen: false,
+        }),
+
+        ctx.db.delete(invitation._id),
+      ]);
+
       return;
     }
 
-    await ctx.db.insert("collaboration", {
-      documentId,
-      collaboratorId: externalId,
-      ownerId: invitation.ownerId,
-    });
+    await Promise.all([
+      ctx.db.insert("collaboration", {
+        documentId,
+        collaboratorId: externalId,
+        ownerId: invitation.ownerId,
+      }),
+      ctx.db.insert("notifications", {
+        notifiedId: invitation.ownerId,
+        notifierId: externalId,
+        type: "invitationAccept",
+        documentId: documentId,
+        isSeen: false,
+      }),
 
-    await ctx.db.delete(invitation._id);
+      ctx.db.delete(invitation._id),
+    ]);
   },
 });

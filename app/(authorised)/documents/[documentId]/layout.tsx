@@ -9,6 +9,7 @@ import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { DocumentEditor } from "./_components/DocumentEditor";
+import { NoDocument } from "./_components/no-document";
 
 interface DocumentLayoutProps {
   children: React.ReactNode;
@@ -26,6 +27,10 @@ const DocumentLayout = ({ children }: DocumentLayoutProps) => {
 
   if (document === undefined) {
     return <HeaderSkeleton />;
+  }
+
+  if (document === null) {
+    return <NoDocument />;
   }
 
   return (

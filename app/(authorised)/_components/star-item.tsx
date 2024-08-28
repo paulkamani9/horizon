@@ -10,7 +10,7 @@ import useSound from "use-sound";
 
 interface StarItemProps {
   documentId: Id<"documents">;
-  size: "small" | "large";
+  size?: "small" | "large";
   isPublic: boolean;
 }
 

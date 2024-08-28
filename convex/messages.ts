@@ -19,7 +19,7 @@ export const sendMessage = mutation({
     if (!user) {
       return null;
     }
-    
+
     if (parentMessageId) {
       const parentMessage = await ctx.db.get(parentMessageId);
 
@@ -32,6 +32,7 @@ export const sendMessage = mutation({
         receiverId,
         body,
         parentMessageId,
+        isSeen: false,
       });
     }
 
@@ -40,6 +41,7 @@ export const sendMessage = mutation({
       senderId: externalId,
       receiverId,
       body,
+      isSeen: false,
     });
   },
 });

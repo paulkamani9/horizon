@@ -12,12 +12,14 @@ interface StarButtonProps {
   documentId: Id<"documents">;
   authorId: string;
   isPublic: boolean;
+  size?: "small" | "large";
 }
 
 export const StarButton = ({
   isPublic,
   documentId,
   authorId,
+  size
 }: StarButtonProps) => {
   const viewsCount = useQuery(api.views.getDocumentViewsCount, {
     documentId,
@@ -35,13 +37,9 @@ export const StarButton = ({
   return (
     <div className="flex items-center justify-center gap-4">
       <div className="flex items-center cursor-pointer gap-2 transition-transform">
-        <StarItem documentId={documentId} isPublic={isPublic} size="large" />
+        <StarItem documentId={documentId} isPublic={isPublic} size={size} />
       </div>
-      <div
-        className={cn(
-          "flex items-center gap-2 opacity-60 text-sm",
-        )}
-      >
+      <div className={cn("flex items-center gap-2 opacity-60 text-sm")}>
         {isPublic ? (
           <Eye className="h-5 w-5" />
         ) : (

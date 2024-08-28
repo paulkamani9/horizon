@@ -8,11 +8,19 @@ import { UserButton, useUser } from "@clerk/nextjs";
 import { Newspaper, NotebookPen, Settings, Users } from "lucide-react";
 import { SidebarItem } from "./sidebar-items";
 import { NewButton } from "./new-button";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
 
 export const Sidebar = () => {
   const { isOpen } = useSidebar();
   const isMobile = useMobile();
   const { user } = useUser();
+  const newNotificationsCount = useQuery(
+    api.notifications.NewNotificationsStatus,
+    {
+      page: "general",
+    }
+  );
 
   return (
     <aside
@@ -33,8 +41,13 @@ export const Sidebar = () => {
               link="/my-documents"
               Icon={NotebookPen}
             />
-            <SidebarItem name="Public" link="/feed" Icon={Newspaper} />
             <SidebarItem name="People" link="/people" Icon={Users} />
+            <SidebarItem
+              name="Public"
+              link="/feed"
+              Icon={Newspaper}
+              notificationCount={newNotificationsCount}
+            />
             <SidebarItem name="Settings" link="/settings" Icon={Settings} />
 
             <div className="block mx-auto md:hidden mt-10">

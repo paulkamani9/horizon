@@ -10,19 +10,28 @@ export default defineSchema({
     externalId: v.string(),
   })
     .index("byExternalId", ["externalId"])
-    .index("byEmail", ["email"]),
+    .index("byEmail", ["email"])
+    .searchIndex("searchName", {
+      searchField: "name",
+    })
+    .searchIndex("searchEmail", {
+      searchField: "email",
+    }),
 
   documents: defineTable({
     title: v.string(),
     icon: v.optional(v.string()),
     content: v.optional(v.string()),
+    // stringContent: v.optional(v.string()),
     description: v.optional(v.string()),
     authorId: v.string(),
+    authorName: v.string(),
     isPublic: v.boolean(),
   })
     .index("byAuthorId", ["authorId"])
     .index("byAuthorIdPublicDocument", ["authorId", "isPublic"])
     .searchIndex("byTitle", { searchField: "title" }),
+    // .searchIndex("byStringContent", { searchField: "stringContent" }),
   collaboration: defineTable({
     documentId: v.id("documents"),
     collaboratorId: v.string(),
@@ -38,18 +47,23 @@ export default defineSchema({
     invitedId: v.string(),
     message: v.optional(v.string()),
     ownerId: v.string(),
-    isDenied: v.boolean(),
+    isSeen: v.boolean(),
   })
     .index("byDocumentId", ["documentId"])
     .index("byInvitedId", ["invitedId"])
     .index("byOwnerId", ["ownerId"])
     .index("byOwnerIdAndInvitedId", ["ownerId", "invitedId"])
-    .index("byDocumentIdAndInvitedId", ["documentId", "invitedId"]),
+    .index("byDocumentIdAndInvitedId", ["documentId", "invitedId"])
+    .index("byInvitedIdAndIsSeen", ["invitedId", "isSeen"]),
   tags: defineTable({
     documentId: v.id("documents"),
     // authorId: v.string(),
     tag: v.string(),
-  }).index("byDocumentId", ["documentId"]),
+  })
+    .index("byDocumentId", ["documentId"])
+    .searchIndex("byTag", {
+      searchField: "tag",
+    }),
   // .index("byAuthorId", ["authorId"])
   // .index("byDocumentIdAndByDocumentId", ["documentId", "authorId"]),
   stars: defineTable({
@@ -82,5 +96,24 @@ export default defineSchema({
     title: v.optional(v.string()),
     body: v.string(),
     parentMessageId: v.optional(v.id("messages")),
-  }).index("byReceiverId", ["receiverId"]),
+    isSeen: v.boolean(),
+  })
+    .index("byReceiverId", ["receiverId"])
+    .index("byReceiverIdAndIsSeen", ["receiverId", "isSeen"]),
+  notifications: defineTable({
+    type: v.union(
+      v.literal("following"),
+      v.literal("starGazing"),
+      v.literal("publicity"),
+      v.literal("invitationAccept"),
+      v.literal("invitationReject")
+    ),
+    notifierId: v.string(),
+    notifiedId: v.string(),
+    documentId: v.optional(v.string()),
+    isSeen: v.boolean(),
+  })
+    .index("byNotifierId", ["notifierId"])
+    .index("byNotifiedId", ["notifiedId"])
+    .index("byNotifiedIdAndIsSeen", ["notifiedId", "isSeen"]),
 });
