@@ -11,6 +11,7 @@ import { CollaborationOptions } from "./collaboration-options";
 import { Tags } from "./tags";
 import { DocumentInformation } from "./document-information";
 import { Id } from "@/convex/_generated/dataModel";
+import { useState } from "react";
 
 interface EditBarProps {
   role: string;
@@ -31,10 +32,23 @@ export const EditBar = ({
   description,
   createdAt,
 }: EditBarProps) => {
-  const { isOpen } = useEditBar();
+  const { isOpen, onClose } = useEditBar();
   const isPC = usePC();
+  const [positionX, setPositionX] = useState<number | undefined>();
   return (
     <div
+      onTouchMove={(e) => {
+        if (positionX === undefined) {
+          setPositionX(e.touches[0].clientX);
+        }
+        if (positionX && e.touches[0].clientX - positionX > 50) {
+          setPositionX(undefined);
+          onClose();
+        }
+      }}
+      onTouchEnd={() => {
+        setPositionX(undefined);
+      }}
       className={cn(
         "fixed right-0  h-[calc(100%-226px)] w-72 transition-transform z-[55] bg-[--light-bg2] dark:bg-[--dark-bg]",
         !isPC && !isOpen && "translate-x-full"

@@ -1,7 +1,11 @@
+"use client"
+
 import { Id } from "@/convex/_generated/dataModel";
 import { FileIcon } from "lucide-react";
 import { StarButton } from "../../documents/_components/star-button";
 import { StarItem } from "../star-item";
+import { useRouter } from "next/navigation";
+import { useSearchModal } from "@/store/use-search-modal";
 
 interface DocumentResultProps {
   _id: Id<"documents">;
@@ -23,9 +27,16 @@ export const DocumentResult = ({
   isPublic,
   authorName,
 }: DocumentResultProps) => {
+    const router = useRouter();
+    const { onClose } = useSearchModal();
+    const onClickUser = () => {
+      router.push(`/documents/${_id}`);
+      onClose();
+    };
   return (
     <div
       role="button"
+      onClick={onClickUser}
       className="flex gap-2 items-center py-1 px-0.5 border-b hover:bg-gray-100 dark:hover:bg-gray-800 max-w-full "
     >
       <FileIcon size={16} />

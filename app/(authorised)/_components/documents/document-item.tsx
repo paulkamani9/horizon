@@ -36,7 +36,7 @@ export const DocumentItem = ({
       <div className="w-full flex flex-col  relative items-center gap-2 hover:bg-[--light-bg2] hover:dark:bg-[--dark-bg2] px-1 py-2 group">
         <button
           className={cn(
-            "absolute h-5 w-5 top-1 right-4 ",
+            "absolute h-5 w-5 top-1 right-4 opacity-60 group-hover:opacity-100",
             user?.id !== authorId && "hidden"
           )}
         >

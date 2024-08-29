@@ -41,10 +41,10 @@ export const AccountSettings = () => {
           e.stopPropagation();
           onOpen(user.name);
         }}
-        className="w-full flex items-center justify-between hover:bg-[--light-bg2] dark:hover:bg-[--dark-bg2] px-2 py-2 rounded-lg cursor-pointer"
+        className="w-full flex items-center justify-between hover:bg-[--light-bg2] dark:hover:bg-[--dark-bg2] px-2 py-2 rounded-lg cursor-pointer truncate"
       >
-        <p >Change Horizon name</p>
-        <p className= " opacity-80">{user.name}</p>
+        <p className="text-sm ">Change name</p>
+        <p className=" opacity-80 truncate">{user.name}</p>
       </div>
 
       <div
@@ -56,7 +56,7 @@ export const AccountSettings = () => {
         }}
         className="w-full flex items-center justify-between  hover:bg-[--light-bg2] dark:hover:bg-[--dark-bg2] px-2 py-2 rounded-lg cursor-pointer"
       >
-        <p>Change Horizon profile picture</p>
+        <p className="text-sm">Change profile picture</p>
         <div className="relative h-8 w-8 rounded-[50%] overflow-clip">
           <Image
             src={user.image}

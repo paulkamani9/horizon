@@ -14,7 +14,7 @@ export const Toolbar = () => {
         <Logo size="Logo" />
       </div>
       <div className="flex pl-6 pr-6 w-full items-center justify-start py-2 md:py-10 gap-6 xl:pr-16 pb-10">
-        <div className="md:hidden">
+        <div className="lg:hidden">
           <Menu
             onClick={(e) => {
               e.stopPropagation();

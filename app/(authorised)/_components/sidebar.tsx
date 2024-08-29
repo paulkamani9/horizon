@@ -10,9 +10,10 @@ import { SidebarItem } from "./sidebar-items";
 import { NewButton } from "./new-button";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { useState } from "react";
 
 export const Sidebar = () => {
-  const { isOpen } = useSidebar();
+  const { isOpen, onClose } = useSidebar();
   const isMobile = useMobile();
   const { user } = useUser();
   const newNotificationsCount = useQuery(
@@ -22,8 +23,23 @@ export const Sidebar = () => {
     }
   );
 
+  const [positionX, setPositionX] = useState<number | undefined>();
+
   return (
     <aside
+      onTouchMove={(e) => {
+        if (positionX === undefined) {
+          setPositionX(e.touches[0].clientX);
+        }
+
+        if (positionX && positionX - e.touches[0].clientX > 30) {
+          setPositionX(undefined);
+          onClose();
+        }
+      }}
+      onTouchEnd={() => {
+        setPositionX(undefined);
+      }}
       className={cn(
         "xl:w-[300px] w-[250px] top-0 left-0 absolute drop-shadow-sm  bg-[--light-bg2] dark:bg-[--dark-bg2] h-full z-50 transition-transform",
         !isOpen && isMobile && "-translate-x-full",

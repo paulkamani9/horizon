@@ -9,6 +9,7 @@ import { Sidebar } from "./_components/sidebar";
 import { Toolbar } from "./_components/toolbar";
 import { useSidebar } from "@/store/use-sidebar";
 import { cn } from "@/lib/utils";
+import { useState } from "react";
 
 interface AuthorizedLayoutProps {
   children: React.ReactNode;
@@ -19,6 +20,7 @@ const AuthorizedLayout = ({ children }: AuthorizedLayoutProps) => {
   const { onClose, isOpen } = useSidebar();
   const router = useRouter();
   const isMobile = useMobile();
+  const [positionX, setPositionX] = useState<number | undefined>();
 
   if (isLoading) {
     return <Loading />;
@@ -36,7 +38,7 @@ const AuthorizedLayout = ({ children }: AuthorizedLayoutProps) => {
           <Sidebar />
           <div className="h-full w-full flex flex-col xl:pl-[300px] pl-[250px]">
             <Toolbar />
-            <section className="flex-1 px-6 max-h-[calc(100vh-28px)] md:max-h-[calc(100vh-136px)] overflow-auto">
+            <section className="flex-1 px-6 max-h-[calc(100vh-28px)]  lg:max-h-[calc(100vh-136px)] overflow-auto">
               {children}
             </section>
           </div>
@@ -51,8 +53,20 @@ const AuthorizedLayout = ({ children }: AuthorizedLayoutProps) => {
       <Toolbar />
       <div
         onClick={(e) => {
-          e.stopPropagation();
           onClose();
+        }}
+        onTouchMove={(e) => {
+          if (positionX === undefined) {
+            setPositionX(e.touches[0].clientX);
+          }
+
+          if (positionX && positionX - e.touches[0].clientX > 15) {
+            setPositionX(undefined);
+            onClose();
+          }
+        }}
+        onTouchEnd={(e) => {
+          setPositionX(undefined);
         }}
         className={cn(
           "absolute h-full w-full bg-[--light-bg] dark:bg-[--dark-bg] opacity-60 z-50",
