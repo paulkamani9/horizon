@@ -1,7 +1,7 @@
 export default {
   providers: [
     {
-      domain: "https://equal-stud-89.clerk.accounts.dev",
+      domain: `${process.env.ISSUER_URL}`,
       applicationID: "convex",
     },
   ],
