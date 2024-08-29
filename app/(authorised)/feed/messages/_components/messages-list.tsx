@@ -14,7 +14,7 @@ export const MessagesList = () => {
     clearMessagesNotifications({
       page: "messages",
     });
-  }, []);
+  }, [clearMessagesNotifications]);
   const messages = useQuery(api.messages.getMyMessages);
 
   if (messages === null || messages?.length === 0) {

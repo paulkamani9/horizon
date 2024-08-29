@@ -18,19 +18,19 @@ import { extractFileUrls } from "@/lib/extract-file-urls";
 type EditorProps = {
   doc: Y.Doc;
   provider: any;
-  role: boolean;
+  color: string;
   name: string;
   documentId: Id<"documents">;
 };
 
 interface Editor {
-  role: boolean;
+  color: string;
   name: string;
   content?: string;
   documentId: Id<"documents">;
 }
 
-function PrivateEditor({ role, name, content, documentId }: Editor) {
+function PrivateEditor({ color, name, documentId }: Editor) {
   const room = useRoom();
 
   const [doc, setDoc] = useState<Y.Doc>();
@@ -57,24 +57,20 @@ function PrivateEditor({ role, name, content, documentId }: Editor) {
     <BlockNote
       doc={doc}
       provider={provider}
-      role={role}
+      color={color}
       name={name}
       documentId={documentId}
     />
   );
 }
 
-function BlockNote({
-  doc,
-  provider,
-  role,
-  name,
-  documentId,
-}: EditorProps) {
+function BlockNote({ doc, provider, color, name, documentId }: EditorProps) {
   const { edgestore } = useEdgeStore();
   const { resolvedTheme } = useTheme();
-  const [previousContent, setPreviousContent] = useState<PartialBlock[] | undefined>()
-  const updateContent = useMutation(api.documents.updateDocumentContent);
+  const [previousContent, setPreviousContent] = useState<
+    PartialBlock[] | undefined
+  >();
+  const updateContent = useMutation(api.documents.updateMyDocument);
 
   const editor: BlockNoteEditor = useCreateBlockNote({
     // there is no initial document here
@@ -94,7 +90,7 @@ function BlockNote({
       // Information for this user:
       user: {
         name: name,
-        color: "#f5f5f5",
+        color: color,
       },
     },
   });
@@ -104,8 +100,8 @@ function BlockNote({
     // but we can still listen for change so that we can update
     // or delete edgestore files
     const currentContent = editor.document;
-    const previousFiles:string[]  = extractFileUrls(previousContent);
-    const currentFiles:string[]  = extractFileUrls(currentContent);
+    const previousFiles: string[] = extractFileUrls(previousContent);
+    const currentFiles: string[] = extractFileUrls(currentContent);
     const deletedFiles = previousFiles.filter(
       (url) => !currentFiles.includes(url)
     );
@@ -128,12 +124,12 @@ function BlockNote({
       content: JSON.stringify(previousContent),
       documentId: documentId,
     });
-  }, [previousContent]);
+  }, [previousContent, updateContent, documentId]);
 
   return (
     <BlockNoteView
       editor={editor}
-      editable={role}
+      editable={true}
       theme={resolvedTheme === "dark" ? "dark" : "light"}
       onChange={handleChange}
     />

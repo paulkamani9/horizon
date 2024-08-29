@@ -12,7 +12,7 @@ export const getDocumentCollaborators = query({
     const document = await ctx.db.get(documentId);
 
     if (!document) {
-      throw new Error("document not found");
+      return null
     }
 
     const { authorId } = document;
@@ -23,7 +23,7 @@ export const getDocumentCollaborators = query({
       .unique();
 
     if (!author) {
-      throw new Error("Author not found");
+      return null;
     }
 
     const collaborationArray = [
@@ -40,18 +40,18 @@ export const getDocumentCollaborators = query({
 
     await Promise.all(
       collaborations.map(async (collaborator) => {
-        const author = await ctx.db
+        const user = await ctx.db
           .query("users")
           .withIndex("byExternalId", (q) =>
             q.eq("externalId", collaborator.collaboratorId)
           )
           .unique();
 
-        if (!author) {
-          throw new Error("Author not found");
+        if (!user) {
+          return null;
         }
 
-        collaborationArray.push({ isAuthor: false, ...author });
+        collaborationArray.push({ isAuthor: false, ...user });
       })
     );
 
@@ -74,7 +74,7 @@ export const leaveCollaboration = mutation({
       .unique();
 
     if (!collaboration) {
-      throw new Error("You are not even collaborating... at collaboration");
+      return null;
     }
 
     await ctx.db.delete(collaboration._id);
@@ -87,21 +87,22 @@ export const removeCollaborator = mutation({
     collaboratorId: v.string(),
   },
   handler: async (ctx, { documentId, collaboratorId }) => {
-    const { externalId } = await getCurrentUserOrThrow(ctx);
-
-    const collaboration = await ctx.db
-      .query("collaboration")
-      .withIndex("byDocumentIdAndCollaboratorId", (q) =>
-        q.eq("documentId", documentId).eq("collaboratorId", collaboratorId)
-      )
-      .unique();
+    const [user, collaboration] = await Promise.all([
+      getCurrentUserOrThrow(ctx),
+      ctx.db
+        .query("collaboration")
+        .withIndex("byDocumentIdAndCollaboratorId", (q) =>
+          q.eq("documentId", documentId).eq("collaboratorId", collaboratorId)
+        )
+        .unique(),
+    ]);
 
     if (!collaboration) {
-      throw new Error("Collaboration not found.");
+      return null;
     }
 
-    if (collaboration.ownerId !== externalId) {
-      throw new Error("You are not the owner of this document");
+    if (collaboration.ownerId !== user.externalId) {
+      return null;
     }
 
     await ctx.db.delete(collaboration._id);

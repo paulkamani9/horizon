@@ -1,4 +1,4 @@
-import { ConvexError, v } from "convex/values";
+import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { getCurrentUserOrThrow } from "./users";
 
@@ -10,7 +10,7 @@ export const createTag = mutation({
     const document = await ctx.db.get(documentId);
 
     if (!document) {
-      throw new Error("Document, does not exist at tags.");
+      return null;
     }
 
     if (externalId !== document.authorId) {
@@ -22,7 +22,7 @@ export const createTag = mutation({
         .unique();
 
       if (!collaboration) {
-        throw new Error("You are not allowed create. At tags");
+        return null;
       }
     }
 
@@ -45,7 +45,7 @@ export const getAllDocumentTags = query({
     const document = await ctx.db.get(documentId);
 
     if (!document) {
-      throw new Error("Document, does not exist at tags.");
+      return null;
     }
 
     if (externalId !== document.authorId) {
@@ -78,7 +78,7 @@ export const deleteDocumentTags = mutation({
     const document = await ctx.db.get(documentId);
 
     if (!document) {
-      throw new Error("Document, does not exist at tags.");
+     return null
     }
 
     if (externalId !== document.authorId) {

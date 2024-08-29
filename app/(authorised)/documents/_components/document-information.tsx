@@ -26,16 +26,17 @@ export const DocumentInformation = ({
 }: DocumentInformationProps) => {
   const [desc, setDesc] = useState<string | undefined>(description);
   const updateDescription = useMutation(
-    api.documents.updateDocumentDescription
+    api.documents.updateMyDocument
   );
+
   useEffect(() => {
     updateDescription({ documentId, description: desc });
-  }, [desc]);
+  }, [desc,documentId,updateDescription]);
 
   const creationDate = formatTimestamp(createdAt);
 
   return (
-    <div className="flex flex-col gap-4 mt-8">
+    <div className="flex flex-col gap-4 mt-16">
       <div className="flex items-center gap-2">
         <InfoIcon size={20} />
         <p>Description</p>

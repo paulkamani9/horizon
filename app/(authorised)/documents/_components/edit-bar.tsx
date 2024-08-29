@@ -41,16 +41,19 @@ export const EditBar = ({
       )}
     >
       <div className="w-full h-full border-t border-l flex flex-col gap-8 border-white pl-4 pr-4 md:pr-2 py-2 overflow-y-auto pb-20">
-        <PublicInformation isPublic={isPublic} title={title}/>
+        <PublicInformation isPublic={isPublic} title={title} />
         <StarButton
           isPublic={isPublic}
           documentId={documentId}
           authorId={authorId}
         />
         <PublicButton role={role} isPublic={isPublic} documentId={documentId} />
-        <div className={cn("w-full", role !== "owner" && "hidden")}>
-          <EditDocument documentId={documentId} title={title} />
-        </div>
+        {role === "owner" && (
+          <div className={"w-full"}>
+            <EditDocument documentId={documentId} title={title} />
+          </div>
+        )}
+
         <CollaborationOptions role={role} documentId={documentId} />
         <div
           className={cn(

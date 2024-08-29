@@ -12,7 +12,6 @@ import TextAreaAutoSize from "react-textarea-autosize";
 import React, { ElementRef, useRef, useState } from "react";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { HoverCardWrapper } from "../../_components/hover-card-wrapper";
 
 interface HeaderProps {
   documentId: Id<"documents">;
@@ -26,7 +25,7 @@ export const Header = ({ documentId, role, icon, title }: HeaderProps) => {
   const inputRef = useRef<ElementRef<"textarea">>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [value, setValue] = useState(title);
-  const updateTitle = useMutation(api.documents.renameMyDocument);
+  const updateTitle = useMutation(api.documents.updateMyDocument);
 
   const enableInput: React.MouseEventHandler<HTMLParagraphElement> = (e) => {
     e.preventDefault();
@@ -48,7 +47,7 @@ export const Header = ({ documentId, role, icon, title }: HeaderProps) => {
     setValue(value);
     updateTitle({
       documentId,
-      title: value || "nully nully",
+      title: value || "untitled",
     });
   };
 
@@ -122,7 +121,7 @@ export const Header = ({ documentId, role, icon, title }: HeaderProps) => {
 export const HeaderSkeleton = () => {
   return (
     <div className="w-full xl:w-[calc(100%-256px)] h-24 flex flex-col">
-      <Skeleton className="h-full w-2/3" />
+      <Skeleton className="h-7 w-2/3" />
     </div>
   );
 };

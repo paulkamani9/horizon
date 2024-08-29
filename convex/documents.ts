@@ -37,40 +37,44 @@ export const getMyDocuments = query({
       isPublic: boolean;
     }[] = [];
 
-    const [myDocuments, collaborations, invitations] = await Promise.all([
-      ctx.db
-        .query("documents")
-        .withIndex("byAuthorId", (q) => q.eq("authorId", externalId))
-        .order("desc")
-        .collect(),
-      ctx.db
-        .query("collaboration")
-        .withIndex("byCollaboratorId", (q) =>
-          q.eq("collaboratorId", externalId)
-        )
-        .order("desc")
-        .collect(),
-      ctx.db
-        .query("invitations")
-        .withIndex("byInvitedId", (q) => q.eq("invitedId", externalId))
-        .order("desc")
-        .collect(),
-    ]);
+    const [myDocuments, collaborationsDocuments, invitationsDocuments] =
+      await Promise.all([
+        ctx.db
+          .query("documents")
+          .withIndex("byAuthorId", (q) => q.eq("authorId", externalId))
+          .order("desc")
+          .collect(),
+        ctx.db
+          .query("collaboration")
+          .withIndex("byCollaboratorId", (q) =>
+            q.eq("collaboratorId", externalId)
+          )
+          .order("desc")
+          .collect()
+          .then(async (collaborations) => {
+            const documents = await Promise.all(
+              collaborations.map((collaboration) =>
+                ctx.db.get(collaboration.documentId)
+              )
+            );
+            return documents;
+          }),
+        ctx.db
+          .query("invitations")
+          .withIndex("byInvitedId", (q) => q.eq("invitedId", externalId))
+          .order("desc")
+          .collect()
+          .then(async (invitations) => {
+            const documents = await Promise.all(
+              invitations.map((invitation) => ctx.db.get(invitation.documentId))
+            );
+            return documents;
+          }),
+      ]);
 
-    const collaborationsDocuments = await Promise.all(
-      collaborations.map((collaboration) =>
-        ctx.db.get(collaboration.documentId)
-      )
-    );
-
-    const invitationDocuments = await Promise.all(
-      invitations.map((invitation) => ctx.db.get(invitation.documentId))
-    );
-
-    // Filter out any null values in case of missing documents
     documents = [
       ...collaborationsDocuments.filter((doc) => doc !== null),
-      ...invitationDocuments.filter((doc) => doc !== null),
+      ...invitationsDocuments.filter((doc) => doc !== null),
       ...myDocuments.filter((doc) => doc !== null),
     ];
 
@@ -85,32 +89,41 @@ export const deleteMyDocument = mutation({
     const existingDocument = await ctx.db.get(documentId);
 
     if (!existingDocument) {
-      throw new Error("Document not found");
+      return null;
     }
 
     if (existingDocument.authorId !== externalId) {
-      throw new Error("You are not the owner of this document");
+      return null;
     }
 
     // Fetch related invitations and collaborations
-    const [invitations, collaborations, stars, views] = await Promise.all([
-      ctx.db
-        .query("invitations")
-        .withIndex("byDocumentId", (q) => q.eq("documentId", documentId))
-        .collect(),
-      ctx.db
-        .query("collaboration")
-        .withIndex("byDocumentId", (q) => q.eq("documentId", documentId))
-        .collect(),
-      ctx.db
-        .query("stars")
-        .withIndex("byDocumentId", (q) => q.eq("documentId", documentId))
-        .collect(),
-      ctx.db
-        .query("views")
-        .withIndex("byDocumentId", (q) => q.eq("documentId", documentId))
-        .collect(),
-    ]);
+    const [invitations, collaborations, stars, views, notifications, tags] =
+      await Promise.all([
+        ctx.db
+          .query("invitations")
+          .withIndex("byDocumentId", (q) => q.eq("documentId", documentId))
+          .collect(),
+        ctx.db
+          .query("collaboration")
+          .withIndex("byDocumentId", (q) => q.eq("documentId", documentId))
+          .collect(),
+        ctx.db
+          .query("stars")
+          .withIndex("byDocumentId", (q) => q.eq("documentId", documentId))
+          .collect(),
+        ctx.db
+          .query("views")
+          .withIndex("byDocumentId", (q) => q.eq("documentId", documentId))
+          .collect(),
+        ctx.db
+          .query("notifications")
+          .withIndex("byDocumentId", (q) => q.eq("documentId", documentId))
+          .collect(),
+        ctx.db
+          .query("tags")
+          .withIndex("byDocumentId", (q) => q.eq("documentId", documentId))
+          .collect(),
+      ]);
 
     // Collect IDs to delete
     const invitationIds = invitations.map((invitation) => invitation._id);
@@ -119,6 +132,10 @@ export const deleteMyDocument = mutation({
     );
     const starsId = stars.map((star) => star._id);
     const viewsId = views.map((view) => view._id);
+    const notificationsId = notifications.map(
+      (notification) => notification._id
+    );
+    const tagsId = tags.map((tag) => tag._id);
 
     // Perform deletions in parallel
     await Promise.all([
@@ -126,76 +143,24 @@ export const deleteMyDocument = mutation({
       ...collaborationIds.map((id) => ctx.db.delete(id)),
       ...starsId.map((id) => ctx.db.delete(id)),
       ...viewsId.map((id) => ctx.db.delete(id)),
+      ...notificationsId.map((id) => ctx.db.delete(id)),
+      ...tagsId.map((id) => ctx.db.delete(id)),
       ctx.db.delete(existingDocument._id),
     ]);
   },
 });
 
-export const renameMyDocument = mutation({
+export const updateMyDocument = mutation({
   args: {
     documentId: v.id("documents"),
     title: v.optional(v.string()),
-  },
-  handler: async (ctx, { documentId, title }) => {
-    const { externalId } = await getCurrentUserOrThrow(ctx);
-    const existingDocument = await ctx.db.get(documentId);
-
-    if (!existingDocument) {
-      throw new Error("Document not found");
-    }
-
-    if (existingDocument.authorId !== externalId) {
-      throw new Error("You are not the owner of this document");
-    }
-    let newTitle = title;
-    if (!title) {
-      newTitle = "Untitled";
-    }
-
-    await ctx.db.patch(existingDocument._id, {
-      title: newTitle,
-    });
-  },
-});
-
-export const changeMyDocumentIcon = mutation({
-  args: {
-    documentId: v.id("documents"),
-    icon: v.string(),
-  },
-  handler: async (ctx, { documentId, icon }) => {
-    const { externalId } = await getCurrentUserOrThrow(ctx);
-    const existingDocument = await ctx.db.get(documentId);
-
-    if (!existingDocument) {
-      throw new Error("Document not found");
-    }
-
-    if (existingDocument.authorId !== externalId) {
-      throw new Error("You are not the owner of this document");
-    }
-
-    let newIcon = icon;
-    if (!icon) {
-      newIcon = "😎";
-    }
-
-    await ctx.db.patch(existingDocument._id, {
-      icon: newIcon,
-    });
-  },
-});
-
-export const updateDocumentContent = mutation({
-  args: {
-    documentId: v.id("documents"),
+    description: v.optional(v.string()),
+    icon: v.optional(v.string()),
     content: v.optional(v.string()),
   },
-  handler: async (ctx, { documentId, content }) => {
-    const [{ externalId }, document] = await Promise.all([
-      getCurrentUserOrThrow(ctx),
-      ctx.db.get(documentId),
-    ]);
+  handler: async (ctx, { documentId, title, description, icon, content }) => {
+    const { externalId } = await getCurrentUserOrThrow(ctx);
+    const document = await ctx.db.get(documentId);
 
     if (!document) {
       return null;
@@ -213,29 +178,35 @@ export const updateDocumentContent = mutation({
         return null;
       }
     }
-    await ctx.db.patch(documentId, {
-      content,
-      // stringContent,
-    });
-  },
-});
 
-export const updateDocumentDescription = mutation({
-  args: {
-    documentId: v.id("documents"),
-    description: v.optional(v.string()),
-  },
-  handler: async (ctx, { documentId, description }) => {
-    const { externalId } = await getCurrentUserOrThrow(ctx);
+    // Prepare patch data
+    const patchData: {
+      title?: string;
+      icon?: string;
+      content?: string;
+      description?: string;
+    } = {};
 
-    const document = await ctx.db.get(documentId);
-    if (document === null || document.authorId !== externalId) {
-      return null;
+    if (title !== undefined) {
+      patchData.title = title || "Untitled";
     }
 
-    await ctx.db.patch(documentId, {
-      description,
-    });
+    if (icon !== undefined) {
+      patchData.icon = icon || "😎";
+    }
+
+    if (content !== undefined) {
+      patchData.content = content;
+    }
+
+    if (description !== undefined) {
+      patchData.description = description;
+    }
+
+    // Apply patch
+    if (Object.keys(patchData).length > 0) {
+      await ctx.db.patch(documentId, patchData);
+    }
   },
 });
 
@@ -249,11 +220,11 @@ export const toggleMyDocumentsPublicity = mutation({
     const document = await ctx.db.get(documentId);
 
     if (!document) {
-      throw new Error("Document not found");
+      return null;
     }
 
     if (document.authorId !== externalId) {
-      throw new Error("You are not the owner of this document");
+      return null;
     }
 
     if (document.isPublic === true) {

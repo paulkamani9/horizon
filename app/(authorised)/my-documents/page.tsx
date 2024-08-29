@@ -1,4 +1,4 @@
-import { DocumentsList } from "../_components/documents/documents-list";
+import { MyDocumentsList } from "../_components/documents/documents-list";
 import { PageWrapper } from "../_components/wrapper";
 import { Header } from "./_components.tsx/header";
 
@@ -7,7 +7,7 @@ const MyDocumentsPage = () => {
     <section className="w-full h-full px-2">
       <Header />
       <PageWrapper>
-        <DocumentsList />
+        <MyDocumentsList />
       </PageWrapper>
     </section>
   );

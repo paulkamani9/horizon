@@ -103,13 +103,15 @@ export const toggleStarDocument = mutation({
           .then(async (collaborations) => {
             await Promise.all(
               collaborations.map((collaboration) =>
-                ctx.db.insert("notifications", {
-                  type: "starGazing",
-                  documentId,
-                  notifiedId: collaboration.collaboratorId,
-                  notifierId: externalId,
-                  isSeen: false,
-                })
+                collaboration.collaboratorId === externalId
+                  ? Promise.resolve()
+                  : ctx.db.insert("notifications", {
+                      type: "starGazing",
+                      documentId,
+                      notifiedId: collaboration.collaboratorId,
+                      notifierId: externalId,
+                      isSeen: false,
+                    })
               )
             );
           }),

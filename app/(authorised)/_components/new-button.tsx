@@ -11,9 +11,9 @@ export const NewButton = () => {
 
   const onCreateDocument = () => {
     const promise = mutate({ title: "New document" })
-      .then((document) => {
-        router.push(`/documents/${document}`);
-      })
+      // .then((document) => {
+      //   router.push(`/documents/${document}`);
+      // })
       .catch(() => {
         return null;
       });

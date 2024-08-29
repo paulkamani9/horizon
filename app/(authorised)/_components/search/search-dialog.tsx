@@ -8,10 +8,7 @@ import { Search } from "lucide-react";
 import { useState } from "react";
 import { SearchResults } from "./search-results";
 
-interface SearchDialogProps {
-  pathname: string;
-}
-export const SearchDialog = ({ pathname }: SearchDialogProps) => {
+export const SearchDialog = () => {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<"documents" | "people">("documents");
   const { isOpen, onClose } = useSearchModal();
@@ -57,11 +54,7 @@ export const SearchDialog = ({ pathname }: SearchDialogProps) => {
             </div>
           </div>
           <div className="max-h-[25vh] overflow-y-auto xl:max-h-[50vh] border-t py-2">
-            <SearchResults
-              pathname={pathname}
-              filter={filter}
-              search={search}
-            />
+            <SearchResults filter={filter} search={search} />
           </div>
         </div>
       </DialogContent>

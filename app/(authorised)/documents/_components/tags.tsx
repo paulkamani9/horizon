@@ -20,10 +20,6 @@ export const Tags = ({ documentId }: TagsProps) => {
 
   const addTag = useMutation(api.tags.createTag);
 
-  if (allTags === null) {
-    return <p>User should not see this</p>;
-  }
-
   if (allTags === undefined) {
     return (
       <div>
@@ -36,7 +32,7 @@ export const Tags = ({ documentId }: TagsProps) => {
   }
 
   return (
-    <div className="flex flex-col mt-8">
+    <div className="flex flex-col mt-16">
       <div className="flex items-center gap-2">
         <TagsIcon size={20} />
         <p>{"Tags (Keywords)"}</p>
@@ -44,16 +40,18 @@ export const Tags = ({ documentId }: TagsProps) => {
       <p className="text-wrap text-xs my-2 ml-2">
         Tags enable others to find your document while searching
       </p>
-      <div className="flex items-center gap-2 ml-2 flex-wrap">
-        {allTags.map((tag) => (
-          <TagItem
-            key={tag._id}
-            documentId={documentId}
-            tagId={tag._id}
-            tag={tag.tag}
-          />
-        ))}
-      </div>
+      {allTags && (
+        <div className="flex items-center gap-2 ml-2 flex-wrap">
+          {allTags.map((tag) => (
+            <TagItem
+              key={tag._id}
+              documentId={documentId}
+              tagId={tag._id}
+              tag={tag.tag}
+            />
+          ))}
+        </div>
+      )}
 
       <div className="flex items-center w-full mt-4 gap-2 ml-2">
         <Input
@@ -63,14 +61,14 @@ export const Tags = ({ documentId }: TagsProps) => {
           onChange={(e) => setTag(e.target.value)}
         />
         <button
-          disabled={tag.trim()===""}
+          disabled={tag.trim() === ""}
           onClick={(e) => {
             e.stopPropagation();
             addTag({
               documentId,
               tag,
-            })
-             
+            });
+
             setTag("");
           }}
           className="bg-transparent disabled:opacity-60 text-sm border border-black dark:border-white py-1 px-2 rounded-sm"

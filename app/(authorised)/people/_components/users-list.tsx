@@ -3,6 +3,7 @@
 import { api } from "@/convex/_generated/api";
 import { useQuery } from "convex/react";
 import { UserItem, UserItemSkeleton } from "./user-item";
+import { EmptyState } from "../../feed/_components/empty-state";
 
 export const UsersList = () => {
   const users = useQuery(api.users.getAllUsers, {});
@@ -16,6 +17,10 @@ export const UsersList = () => {
         <UserItemSkeleton />
       </div>
     );
+  }
+
+  if (users.length === 0) {
+    <EmptyState imageSrc="/alone.svg" message="Guess who is alone....🧛🏽‍♂️" />;
   }
 
   return (

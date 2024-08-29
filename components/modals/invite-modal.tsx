@@ -82,7 +82,7 @@ const InviteForm = () => {
         <div className="flex flex-col items-center">
           <p className="font-bold">Invite Author to Collaborate</p>
           <p className="text-sm opacity-80">
-            Enter Author's Email to send invitation.
+            Enter Author&lsquo;s Email to send invitation.
           </p>
         </div>
         <div className="w-full flex flex-col gap-4">

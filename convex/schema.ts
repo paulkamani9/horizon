@@ -31,7 +31,7 @@ export default defineSchema({
     .index("byAuthorId", ["authorId"])
     .index("byAuthorIdPublicDocument", ["authorId", "isPublic"])
     .searchIndex("byTitle", { searchField: "title" }),
-    // .searchIndex("byStringContent", { searchField: "stringContent" }),
+  // .searchIndex("byStringContent", { searchField: "stringContent" }),
   collaboration: defineTable({
     documentId: v.id("documents"),
     collaboratorId: v.string(),
@@ -115,5 +115,6 @@ export default defineSchema({
   })
     .index("byNotifierId", ["notifierId"])
     .index("byNotifiedId", ["notifiedId"])
-    .index("byNotifiedIdAndIsSeen", ["notifiedId", "isSeen"]),
+    .index("byNotifiedIdAndIsSeen", ["notifiedId", "isSeen"])
+    .index("byDocumentId", ["documentId"]),
 });

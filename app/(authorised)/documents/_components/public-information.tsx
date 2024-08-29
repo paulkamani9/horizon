@@ -11,7 +11,9 @@ export const PublicInformation = ({ isPublic,title }: PublicInformationProps) =>
           ? "This document is available publicly"
           : " This is a private document"}
       </p>
-      <p className="text-sm  opacity-80 text-center ">Title: "{title}"</p>
+      <p className="text-sm opacity-80 text-center">
+        Title: &ldquo;{title}&rdquo;
+      </p>
     </div>
   );
 };

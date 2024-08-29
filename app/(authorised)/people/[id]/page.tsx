@@ -1,4 +1,4 @@
-import { DocumentsList } from "../../_components/documents/documents-list";
+import { AnotherUserDocumentsList } from "../../_components/documents/documents-list";
 import { PageWrapper } from "../../_components/wrapper";
 import Header from "./_components/header";
 
@@ -7,12 +7,12 @@ interface UserPageProps {
     id: string;
   };
 }
-const UserPage = ({ params: { id } }: UserPageProps) => {
+const UserPage = ({ params }: UserPageProps) => {
   return (
     <section className="w-full h-full px-2">
-      <Header id={id} />
+      <Header id={params.id} />
       <PageWrapper>
-        <DocumentsList />
+        <AnotherUserDocumentsList params={params} />
       </PageWrapper>
     </section>
   );

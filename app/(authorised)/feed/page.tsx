@@ -16,7 +16,7 @@ const FeedPage = () => {
     clearGeneralNotifications({
       page: "general",
     });
-  }, []);
+  }, [clearGeneralNotifications]);
   
   const notifications = useQuery(api.notifications.getNotifications);
   if (notifications === undefined) {
@@ -37,7 +37,7 @@ const FeedPage = () => {
   return (
     <div className="flex flex-col w-full gap-2">
       {notifications.map((notification) => (
-        <NotificationsItem {...notification} />
+        <NotificationsItem key={notification._id} {...notification} />
       ))}
     </div>
   );

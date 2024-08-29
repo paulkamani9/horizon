@@ -30,7 +30,8 @@ export const InvitationCard = ({
   const document = useQuery(api.invitations.getInvitationDocuments, {
     documentId,
   });
-
+  
+  
   if (
     owner === undefined ||
     document === undefined ||
@@ -43,13 +44,14 @@ export const InvitationCard = ({
     );
   }
 
-  const otherCollaborators = collaborationInfo.filter(
+
+  if (owner === null || document === null || collaborationInfo === null)  {
+    return <></> //perhaps make more dynamic returns for the lack of a single query
+  }
+
+const otherCollaborators = collaborationInfo.filter(
     (collaborator) => collaborator.externalId !== ownerId
   );
-
-  if (owner === null || document === null) {
-    return <p>no owner anymore...</p>;
-  }
 
   return (
     <Card>
@@ -81,7 +83,7 @@ export const InvitationCard = ({
                 </Link>
                 .
               </p>
-              {otherCollaborators.length > 0 && (
+              {otherCollaborators.length  && (
                 <>
                   <span className="text-sm">Other collaborators</span>
                   {otherCollaborators.map((collaborator, index) => (

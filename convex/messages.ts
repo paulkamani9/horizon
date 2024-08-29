@@ -26,7 +26,7 @@ export const sendMessage = mutation({
       if (!parentMessage) {
         return null;
       }
-      return await ctx.db.insert("messages", {
+      await ctx.db.insert("messages", {
         title: parentMessage.title,
         senderId: externalId,
         receiverId,
@@ -34,6 +34,7 @@ export const sendMessage = mutation({
         parentMessageId,
         isSeen: false,
       });
+      return;
     }
 
     await ctx.db.insert("messages", {

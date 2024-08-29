@@ -85,11 +85,11 @@ export const inviteAuthor = mutation({
     const document = await ctx.db.get(args.documentId);
 
     if (!document) {
-      throw new Error("Document not found at invitations");
+      return null;
     }
 
     if (document.authorId !== externalId) {
-      throw new Error("You are not the owner of this document at invitations");
+      return null;
     }
 
     const invited = await ctx.db
@@ -98,7 +98,7 @@ export const inviteAuthor = mutation({
       .unique();
 
     if (!invited) {
-      throw new Error("Invitee not found at invitations");
+      return null;
     }
 
     await ctx.db.insert("invitations", {
@@ -186,6 +186,8 @@ export const acceptOrRejectInvitation = mutation({
         documentId: documentId,
         isSeen: false,
       }),
+
+      // perhaphs notifier other collaborators
 
       ctx.db.delete(invitation._id),
     ]);

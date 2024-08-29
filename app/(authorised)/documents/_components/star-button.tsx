@@ -32,7 +32,7 @@ export const StarButton = ({
       documentId,
       id: authorId,
     });
-  }, []);
+  }, [viewDocument,documentId,authorId]);
 
   return (
     <div className="flex items-center justify-center gap-4">

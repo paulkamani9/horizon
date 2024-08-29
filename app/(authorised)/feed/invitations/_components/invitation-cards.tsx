@@ -15,7 +15,7 @@ export const InvitationCards = () => {
     clearInvitationsNotifications({
       page: "invitations",
     });
-  }, []);
+  }, [clearInvitationsNotifications]);
 
   const invitations = useQuery(api.invitations.getAllMyInvitations);
 
@@ -31,7 +31,7 @@ export const InvitationCards = () => {
     );
   }
 
-  if (invitations.length < 1) {
+  if (invitations.length < 1 || invitations == null ) {
     return (
       <EmptyState
         message="I made my decision. Period!"

@@ -33,7 +33,7 @@ export const RenameModal = () => {
   const { isOpen, onClose, initialValues } = useRenameModal((state) => state);
 
   const [title, setTitle] = useState(initialValues.title);
-  const { mutate, pending } = useApiMutation(api.documents.renameMyDocument);
+  const { mutate, pending } = useApiMutation(api.documents.updateMyDocument);
 
   useEffect(() => {
     setTitle(initialValues.title);

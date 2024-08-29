@@ -7,6 +7,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { FeedPageSkeleton } from "./feed-page-skeleton";
 import { EmptyState } from "./empty-state";
+import { UserCircle2 } from "lucide-react";
 
 interface NotificationsItemProps {
   _id: Id<"notifications">;
@@ -36,7 +37,7 @@ export const NotificationsItem = ({
     documentId: documentId as Id<"documents">,
   });
 
-  if (user === undefined || user === null) {
+  if (user === undefined) {
     return <FeedPageSkeleton />;
   }
 
@@ -44,11 +45,17 @@ export const NotificationsItem = ({
     <Link href={`/people/${notifierId}`}>
       <div className="flex items-center gap-4 rounded-lg border bg-card text-card-foreground shadow-sm w-full px-4 py-6 ">
         <div className="w-6 h-6 rounded-[50%] relative overflow-clip">
-          <Image src={user.image} fill alt={user.name} />
+          {user ? (
+            <Image src={user.image} fill alt={user.name} />
+          ) : (
+            <UserCircle2 />
+          )}
         </div>
         <div className="flex-1">
           <Link href={`/people/${notifierId}`}>
-            <span className="underline font-semibold">{user.name}</span>
+            <span className="underline font-semibold">
+              {user ? user.name : "Unknown user"}
+            </span>
           </Link>
           {type === "following" && <span> is now following you</span>}
           {type === "starGazing" && (

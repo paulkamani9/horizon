@@ -6,16 +6,11 @@ import { UserResult, ResultSkeleton } from "./user-result";
 import { DocumentResult } from "./document-result";
 
 interface SearchResultsProps {
-  pathname: string;
   filter: string;
   search: string;
 }
 
-export const SearchResults = ({
-  pathname,
-  filter,
-  search,
-}: SearchResultsProps) => {
+export const SearchResults = ({ filter, search }: SearchResultsProps) => {
   const people = useQuery(api.users.getAllUsers, {
     search,
   });
@@ -42,7 +37,7 @@ export const SearchResults = ({
     return (
       <div className="w-full flex flex-col gap-2">
         {people.map((person) => (
-          <UserResult {...person} />
+          <UserResult key={person._id} {...person} />
         ))}
       </div>
     );
@@ -66,7 +61,7 @@ export const SearchResults = ({
   return (
     <div className="max-w-full flex flex-col gap-2">
       {documents.map((document) => (
-        <DocumentResult {...document} />
+        <DocumentResult key={document._id} {...document} />
       ))}
     </div>
   );

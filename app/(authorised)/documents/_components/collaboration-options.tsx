@@ -8,6 +8,7 @@ import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useInviteModal } from "@/store/use-invite-modal";
 import { AdminActions } from "./admin-actions";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface CollaborationOptionsProps {
   role: string;
@@ -27,12 +28,17 @@ export const CollaborationOptions = ({
   
 
   if (collaborators === undefined) {
-    return <div>sole owner</div>;
+    return <div className="w-full flex flex-col gap-2">
+      <Skeleton className="h-6 w-20"/>
+      <Skeleton className="h-4 w-40"/>
+      <Skeleton className="h-4 w-40"/>
+      <Skeleton className="h-4 w-40"/>
+    </div>
   }
 
   return (
     <div
-      className={cn("flex flex-col gap-4 w-full", role === "owner" && "mt-8")}
+      className={cn("flex flex-col gap-4 w-full", role === "owner" && "mt-16")}
     >
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
@@ -47,19 +53,21 @@ export const CollaborationOptions = ({
         </AdminActions>
       </div>
 
-      <div className="flex flex-col gap-2">
-        {collaborators.map((collaborator) => (
-          <AuthorItem
-            key={collaborator._id}
-            documentId={documentId}
-            authorId={collaborator.externalId}
-            name={collaborator.name}
-            image={collaborator.image}
-            isAuthor={collaborator.isAuthor}
-            role={role}
-          />
-        ))}
-      </div>
+      {collaborators && (
+        <div className="flex flex-col gap-2">
+          {collaborators.map((collaborator) => (
+            <AuthorItem
+              key={collaborator._id}
+              documentId={documentId}
+              authorId={collaborator.externalId}
+              name={collaborator.name}
+              image={collaborator.image}
+              isAuthor={collaborator.isAuthor}
+              role={role}
+            />
+          ))}
+        </div>
+      )}
 
       <div
         className={cn(
@@ -71,7 +79,7 @@ export const CollaborationOptions = ({
           onClick={() => {
             onOpen(documentId);
           }}
-          className="px-6 py-2 font-semibold tracking-widest text-sm bg-green-500 rounded-sm mt-4"
+          className="px-6 py-2 font-semibold tracking-widest text-sm bg-green-500 rounded-sm mt-12"
         >
           Invite
         </button>

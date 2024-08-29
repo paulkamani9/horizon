@@ -23,7 +23,7 @@ export const IconPicker = ({
   children,
   isDropdown,
 }: IconPickerProps) => {
-  const changeIcon = useMutation(api.documents.changeMyDocumentIcon);
+  const changeIcon = useMutation(api.documents.updateMyDocument);
   const { toClose, open, toOpen } = useEmojiPicker();
 
   const onChange = (icon: string) => {

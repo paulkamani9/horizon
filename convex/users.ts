@@ -39,56 +39,98 @@ export const deleteFromClerk = internalMutation({
     const user = await userByExternalId(ctx, clerkUserId);
 
     if (user !== null) {
-      // document specific tables
+      const { externalId } = user;
+
+      // Document-specific deletions
       const documents = await ctx.db
         .query("documents")
-        .withIndex("byAuthorId", (q) => q.eq("authorId", user.externalId))
+        .withIndex("byAuthorId", (q) => q.eq("authorId", externalId))
         .collect();
 
-      await documents.map(async (document) => {
-        const collaborations = await ctx.db
+      await Promise.all(
+        documents.map(async (document) => {
+          const documentId = document._id;
+
+          // Delete collaborations, invitations, tags, stars, and views related to the document
+          const relatedDeletions = [
+            ctx.db
+              .query("collaboration")
+              .withIndex("byDocumentId", (q) => q.eq("documentId", documentId))
+              .collect(),
+            ctx.db
+              .query("invitations")
+              .withIndex("byDocumentId", (q) => q.eq("documentId", documentId))
+              .collect(),
+            ctx.db
+              .query("tags")
+              .withIndex("byDocumentId", (q) => q.eq("documentId", documentId))
+              .collect(),
+            ctx.db
+              .query("stars")
+              .withIndex("byDocumentId", (q) => q.eq("documentId", documentId))
+              .collect(),
+            ctx.db
+              .query("views")
+              .withIndex("byDocumentId", (q) => q.eq("documentId", documentId))
+              .collect(),
+          ];
+
+          const results = await Promise.all(relatedDeletions);
+
+          await Promise.all(
+            results
+              .flat()
+              .map(async (relatedDoc) => await ctx.db.delete(relatedDoc._id))
+          );
+
+          // Delete the document itself
+          await ctx.db.delete(documentId);
+        })
+      );
+
+      // User-specific deletions: collaborations, invitations, followerships, messages, notifications
+      const userRelatedDeletions = [
+        ctx.db
           .query("collaboration")
-          .withIndex("byDocumentId", (q) => q.eq("documentId", document._id))
-          .collect();
-
-        await collaborations.map(async (collaboration) => {
-          await ctx.db.delete(collaboration._id);
-        });
-
-        const invitations = await ctx.db
+          .withIndex("byCollaboratorId", (q) =>
+            q.eq("collaboratorId", externalId)
+          )
+          .collect(),
+        ctx.db
           .query("invitations")
-          .withIndex("byDocumentId", (q) => q.eq("documentId", document._id))
-          .collect();
+          .withIndex("byInvitedId", (q) => q.eq("invitedId", externalId))
+          .collect(),
+        ctx.db
+          .query("followership")
+          .withIndex("byFollowedId", (q) => q.eq("followedId", externalId))
+          .collect(),
+        ctx.db
+          .query("followership")
+          .withIndex("byFollowerId", (q) => q.eq("followerId", externalId))
+          .collect(),
+        ctx.db
+          .query("messages")
+          .withIndex("byReceiverId", (q) => q.eq("receiverId", externalId))
+          .collect(),
+        ctx.db
+          .query("notifications")
+          .withIndex("byNotifierId", (q) => q.eq("notifierId", externalId))
+          .collect(),
+        ctx.db
+          .query("notifications")
+          .withIndex("byNotifiedId", (q) => q.eq("notifiedId", externalId))
+          .collect(),
+      ];
 
-        await invitations.map(async (invitation) => {
-          await ctx.db.delete(invitation._id);
-        });
+      const userResults = await Promise.all(userRelatedDeletions);
 
-        await ctx.db.delete(document._id);
-      });
+      await Promise.all(
+        userResults
+          .flat()
+          .map(async (relatedDoc) => ctx.db.delete(relatedDoc._id))
+      );
 
-      // user specific tables
-
-      const collaborations = await ctx.db
-        .query("collaboration")
-        .withIndex("byCollaboratorId", (q) =>
-          q.eq("collaboratorId", user.externalId)
-        )
-        .collect();
-
-      await collaborations.map(async (collaboration) => {
-        await ctx.db.delete(collaboration._id);
-      });
-
-      const invitations = await ctx.db
-        .query("invitations")
-        .withIndex("byInvitedId", (q) => q.eq("invitedId", user.externalId))
-        .collect();
-
-      await invitations.map(async (invitation) => {
-        await ctx.db.delete(invitation._id);
-      });
-
+      // Delete the user
       await ctx.db.delete(user._id);
     } else {
       console.warn(
@@ -169,17 +211,20 @@ export const getAllUsers = query({
     const { externalId } = await getCurrentUserOrThrow(ctx);
 
     if (search) {
-      const usersByName = await ctx.db
-        .query("users")
-        .withSearchIndex("searchName", (q) => q.search("name", search))
-        .filter((q) => q.neq(q.field("externalId"), externalId))
-        .collect();
+      const searchResults = [
+        ctx.db
+          .query("users")
+          .withSearchIndex("searchName", (q) => q.search("name", search))
+          .filter((q) => q.neq(q.field("externalId"), externalId))
+          .collect(),
+        ctx.db
+          .query("users")
+          .withSearchIndex("searchEmail", (q) => q.search("email", search))
+          .filter((q) => q.neq(q.field("externalId"), externalId))
+          .collect(),
+      ];
 
-      const usersByEmail = await ctx.db
-        .query("users")
-        .withSearchIndex("searchEmail", (q) => q.search("email", search))
-        .filter((q) => q.neq(q.field("externalId"), externalId))
-        .collect();
+      const [usersByName, usersByEmail] = await Promise.all(searchResults);
 
       // Combine results, removing duplicates if necessary
       const combinedResults = [...usersByName, ...usersByEmail];
