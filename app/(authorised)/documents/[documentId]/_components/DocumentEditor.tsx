@@ -44,12 +44,10 @@ export const DocumentEditor = ({ _id, role, content }: DocumentEditorProps) => {
     );
   }
 
-
-
   return (
     <LiveblocksProvider
       publicApiKey={
-        "pk_dev_J2b1b8xIu5YK-lOwY6bSWD1INzHcFjAmQ4Ed7beZYJCLMCeNhEs5VNYDoGxiw7rG"
+        "pk_prod_qR3JaLalQrQZ5ezUN5s8hGZINzUaV7-_SaDembII22vuM89w0zdvczt5bAMNYikD"
       }
     >
       <RoomProvider id={_id}>
