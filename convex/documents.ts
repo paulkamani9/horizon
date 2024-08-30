@@ -271,6 +271,16 @@ export const getAnotherUsersPublicDocuments = query({
     // Initialize an array to collect all documents the current user can access
     let documents = [];
 
+    // check the users existence
+    const user = await ctx.db
+      .query("users")
+      .withIndex("byExternalId", (q) => q.eq("externalId", args.id))
+      .unique();
+
+    if (!user) {
+      return null;
+    }
+
     // Fetch all public documents authored by the specified user
     const publicDocuments = await ctx.db
       .query("documents")

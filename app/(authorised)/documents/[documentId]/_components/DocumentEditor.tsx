@@ -52,7 +52,7 @@ export const DocumentEditor = ({ _id, role, content }: DocumentEditorProps) => {
     >
       <RoomProvider id={_id}>
         <ClientSideSuspense fallback={<div>Loading…</div>}>
-          <div className="w-full border py-2 bg-card dark:bg-slate-950 shadow-md min-h-[850px] rounded-sm ">
+          <div className="border py-2 bg-card dark:bg-slate-950 shadow-md min-h-[850px] rounded-sm">
             <PrivateEditor
               color={
                 (role as "owner" | "admin") === "owner" ? "#fecaca" : "#bbf7d0"

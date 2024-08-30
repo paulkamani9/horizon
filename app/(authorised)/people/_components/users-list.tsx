@@ -20,7 +20,9 @@ export const UsersList = () => {
   }
 
   if (users.length === 0) {
-    <EmptyState imageSrc="/alone.svg" message="Guess who is alone....🧛🏽‍♂️" />;
+    return (
+      <EmptyState imageSrc="/alone.svg" message="Guess who is alone....🧛🏽‍♂️" />
+    )
   }
 
   return (

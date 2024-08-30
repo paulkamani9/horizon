@@ -13,8 +13,16 @@ interface HeaderProps {
 }
 const Header = ({ id }: HeaderProps) => {
   const user = useQuery(api.users.getAnotherUser, { externalId: id });
-  if (!user) {
+  if (user === undefined) {
     return <HeaderSkeleton />;
+  }
+
+  if (user === null) {
+    return (
+      <HeaderWrapper>
+        <></>
+      </HeaderWrapper>
+    );
   }
 
   return (

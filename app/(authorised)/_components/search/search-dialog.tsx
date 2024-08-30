@@ -16,10 +16,11 @@ export const SearchDialog = () => {
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogOverlay
         onClick={() => {
+          setSearch("")
           onClose();
         }}
       />
-      <DialogContent className=" -translate-y-28 top-[130px] w-[90%] md:max-w-2xl flex">
+      <DialogContent className=" -translate-y-28 top-[130px] w-[90%] md:max-w-2xl flex rounded-lg">
         <div className="flex flex-col w-full relative">
           <div className="flex flex-col static">
             <div className="w-full relative">

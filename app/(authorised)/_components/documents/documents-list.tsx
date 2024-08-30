@@ -4,6 +4,7 @@ import { useQuery } from "convex/react";
 import { DocumentItem, DocumentItemSkeleton } from "./document-item";
 import { api } from "@/convex/_generated/api";
 import { EmptyState } from "./empty-state";
+import { NotAllowed } from "../not-allowed";
 
 export const MyDocumentsList = () => {
   const documents = useQuery(api.documents.getMyDocuments);
@@ -46,7 +47,6 @@ interface AnotherUserDocumentsListProps {
   };
 }
 
-
 export const AnotherUserDocumentsList = ({
   params: { id },
 }: AnotherUserDocumentsListProps) => {
@@ -63,6 +63,10 @@ export const AnotherUserDocumentsList = ({
         <DocumentItemSkeleton />
       </div>
     );
+  }
+
+  if (documents === null) {
+    return <NotAllowed type={"User"} />;
   }
 
   if (documents.length < 1) {

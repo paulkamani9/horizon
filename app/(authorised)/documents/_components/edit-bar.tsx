@@ -41,7 +41,7 @@ export const EditBar = ({
         if (positionX === undefined) {
           setPositionX(e.touches[0].clientX);
         }
-        if (positionX && e.touches[0].clientX - positionX > 50) {
+        if (positionX && e.touches[0].clientX - positionX > 100) {
           setPositionX(undefined);
           onClose();
         }

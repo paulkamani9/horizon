@@ -38,7 +38,7 @@ const AuthorizedLayout = ({ children }: AuthorizedLayoutProps) => {
           <Sidebar />
           <div className="h-full w-full flex flex-col xl:pl-[300px] pl-[250px]">
             <Toolbar />
-            <section className="flex-1 px-6 max-h-[calc(100vh-28px)]  lg:max-h-[calc(100vh-136px)] overflow-auto">
+            <section className="flex-1 px-6  lg:max-h-[calc(100vh-130px)] overflow-auto">
               {children}
             </section>
           </div>
@@ -74,7 +74,7 @@ const AuthorizedLayout = ({ children }: AuthorizedLayoutProps) => {
         )}
       />
       <Sidebar />
-      <section className="px-4 flex-1 sm:px-6  overflow-auto max-h-[calc(100vh-145px)]">
+      <section className="px-4 flex-1 sm:px-6  overflow-auto max-h-[calc(100vh-140px)] md:max-h-[calc(100vh-120px)] ">
         {children}
       </section>
     </main>

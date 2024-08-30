@@ -33,7 +33,7 @@ export const UserItem = ({ id, name, image, email }: UserItemProps) => {
     <Link href={`/people/${id}`} className="w-full">
       <div className="w-full flex rounded-lg border bg-card text-card-foreground shadow-sm">
         <div className=" flex items-center justify-center p-6">
-          <div className="relative aspect-square w-[60px]  rounded-[50%] lg:w-[90px]  overflow-clip">
+          <div className="relative aspect-square w-11  rounded-[50%] lg:w-[90px]  overflow-clip">
             <Image src={image} alt={`${name} picture`} fill objectFit="fill" />
           </div>
         </div>

@@ -1,6 +1,7 @@
 "use client";
 import { api } from "@/convex/_generated/api";
 import { useApiMutation } from "@/hooks/use-api-mutation";
+import { useSidebar } from "@/store/use-sidebar";
 import { Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -8,12 +9,14 @@ import { toast } from "sonner";
 export const NewButton = () => {
   const router = useRouter();
   const { mutate, pending } = useApiMutation(api.documents.createDocument);
+  const { onClose } = useSidebar();
 
   const onCreateDocument = () => {
     const promise = mutate({ title: "New document" })
-      // .then((document) => {
-      //   router.push(`/documents/${document}`);
-      // })
+      .then((document) => {
+        onClose();
+        router.push(`/documents/${document}`);
+      })
       .catch(() => {
         return null;
       });
