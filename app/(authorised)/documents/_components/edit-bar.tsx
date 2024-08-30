@@ -54,7 +54,7 @@ export const EditBar = ({
         !isPC && !isOpen && "translate-x-full"
       )}
     >
-      <div className="w-full h-full border-t border-l flex flex-col gap-8 border-white pl-4 pr-4 md:pr-2 py-2 overflow-y-auto pb-20">
+      <div className="w-full h-full border-t border-l flex flex-col gap-8 border-white pl-4 pr-4 md:pr-2 py-2 overflow-y-auto pb-20  scrollbar-thin scrollbar-track-transparent scrollbar-thumb-gray-600">
         <PublicInformation isPublic={isPublic} title={title} />
         <StarButton
           isPublic={isPublic}

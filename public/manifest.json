@@ -1,0 +1,30 @@
+{
+  "name": "Horizon",
+  "short_name": "Horizon",
+  "theme_color": "#030712",
+  "background_color": "#111827",
+  "display": "standalone",
+  "orientation": "any",
+  "scope": "/",
+  "start_url": "/my-documents",
+  "icons": [
+    {
+      "src": "/logo-horizon-192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/logo-horizon-256.png",
+      "type": "image/png",
+      "sizes": "256x256",
+      "purpose": "image/png"
+    },
+    {
+      "src": "/logo-horizon-512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "image/png"
+    }
+  ]
+}

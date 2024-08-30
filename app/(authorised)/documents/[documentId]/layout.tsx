@@ -61,7 +61,7 @@ const DocumentLayout = ({ children }: DocumentLayoutProps) => {
           !isOpen && "hidden"
         )}
       />
-      <div className="mt-4 w-full xl:w-[calc(100%-288px)]  h-[calc(100%-112px)] overflow-auto">
+      <div className="mt-4 w-full xl:w-[calc(100%-288px)]  h-[calc(100%-112px)] overflow-auto  scrollbar-thin scrollbar-track-transparent scrollbar-thumb-gray-600">
         <DocumentEditor {...document} />
         {/* {children} */}
       </div>

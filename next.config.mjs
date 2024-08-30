@@ -1,4 +1,23 @@
 /** @type {import('next').NextConfig} */
+// // @ts-check
+import withPWAInit from "@ducanh2912/next-pwa";
+
+const withPWA = withPWAInit({
+  dest: "public",
+  cacheOnFrontEndNav: true,
+  aggressiveFrontEndNavCaching: true,
+  reloadOnOnline: true,
+  cacheStartUrl: true,
+  dynamicStartUrl: true,
+  dynamicStartUrlRedirect: "/my-documents",
+  // swcMinify: true,
+  extendDefaultRuntimeCaching: true,
+  disable: false,
+  workboxOptions: {
+    disableDevLogs: true,
+  },
+});
+
 const nextConfig = {
   images: {
     remotePatterns: [
@@ -8,10 +27,10 @@ const nextConfig = {
       },
       {
         protocol: "https",
-        hostname: "files.edgestore.dev"
+        hostname: "files.edgestore.dev",
       },
     ],
   },
 };
 
-export default nextConfig;
+export default withPWA(nextConfig);
