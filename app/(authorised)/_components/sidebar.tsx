@@ -59,7 +59,7 @@ export const Sidebar = () => {
             />
             <SidebarItem name="People" link="/people" Icon={Users} />
             <SidebarItem
-              name="Public"
+              name="Notifications"
               link="/feed"
               Icon={Newspaper}
               notificationCount={newNotificationsCount}
