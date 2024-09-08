@@ -66,7 +66,7 @@ export const Actions = ({
           </div>
         </DropdownMenuItem>
 
-        <IconPicker documentId={documentId}>
+        <IconPicker documentId={documentId} isDropdown={true}>
           <Button
             variant={"ghost"}
             className="text-xs flex items-center w-full justify-start gap-4 px-3 py-4 rounded-sm"
