@@ -18,8 +18,6 @@ interface UserItemProps {
 }
 
 export const UserItem = ({ id, name, image, email }: UserItemProps) => {
-
-
   const onCopyEmail: React.MouseEventHandler<HTMLButtonElement> = (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -30,20 +28,23 @@ export const UserItem = ({ id, name, image, email }: UserItemProps) => {
   };
 
   return (
-    <Link href={`/people/${id}`} className="w-full">
-      <div className="w-full flex rounded-lg border bg-card text-card-foreground shadow-sm">
+    <Link href={`/people/${id}`} className="w-full max-w-3xl">
+      <div className="w-full flex rounded-lg border bg-card text-card-foreground shadow-sm overflow-hidden">
         <div className=" flex items-center justify-center p-6">
           <div className="relative aspect-square w-11  rounded-[50%] lg:w-[90px]  overflow-clip">
             <Image src={image} alt={`${name} picture`} fill objectFit="fill" />
           </div>
         </div>
-        <div className="flex-1 flex flex-col py-6">
-          <p className="text-2xl font-semibold leading-none tracking-tight">
+        <div className="flex flex-col py-6 truncate">
+          <p className="text-2xl font-semibold leading-none tracking-tight truncate">
             {name}
           </p>
-          <div className="flex flex-col mt-2 ml-2 gap-2">
-            <div className="flex w-full items-center group gap-2">
-              <p className="text-sm opacity-80 cursor-text truncate">{email}</p>
+          <div className="flex flex-col mt-2 ml-2 gap-2 ">
+            <div className="flex max-w-full items-center group gap-2 ">
+              <p className="text-sm opacity-80 cursor-text truncate">
+                {email}
+              </p>
+
               <HoverCardWrapper message="Copy Email">
                 <Button onClick={onCopyEmail} size="sm" variant={"ghost"}>
                   <Copy

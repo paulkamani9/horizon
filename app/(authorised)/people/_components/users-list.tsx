@@ -22,11 +22,11 @@ export const UsersList = () => {
   if (users.length === 0) {
     return (
       <EmptyState imageSrc="/alone.svg" message="Guess who is alone....🧛🏽‍♂️" />
-    )
+    );
   }
 
   return (
-    <div className=" w-full flex flex-col items-center max-w-3xl gap-y-6 mx-auto">
+    <div className=" w-full flex flex-col items-center gap-y-6 ">
       {users?.map(({ externalId, name, image, email }) => (
         <UserItem
           key={externalId}

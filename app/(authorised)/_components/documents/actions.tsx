@@ -7,6 +7,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
 import { Pencil, Smile, Trash2 } from "lucide-react";
 import { AlertAction } from "../alert-action";
 import { useApiMutation } from "@/hooks/use-api-mutation";
@@ -56,26 +57,24 @@ export const Actions = ({
           e.stopPropagation();
         }}
       >
-        <DropdownMenuItem onClick={() => onOpen(documentId, title)}>
+        <DropdownMenuItem
+          onClick={() => onOpen(documentId, title)}
+          className="hover:bg-[--light-bg] hover:dark:bg-[--dark-bg]"
+        >
           <div className="text-xs flex gap-4 px-1 py-2 items-center w-full justify-start cursor-pointer ">
             <Pencil size={16} /> Rename document
           </div>
         </DropdownMenuItem>
 
-        <DropdownMenuItem>
-          <IconPicker documentId={documentId} isDropdown={true}>
-            <div
-              onClick={(e) => {
-                e.preventDefault();
-              }}
-              // variant="ghost"
-              className="text-xs w-full flex items-center justify-start gap-4 px-1 py-2"
-            >
-              <Smile size={16} />
-              Change icon
-            </div>
-          </IconPicker>
-        </DropdownMenuItem>
+        <IconPicker documentId={documentId}>
+          <Button
+            variant={"ghost"}
+            className="text-xs flex items-center w-full justify-start gap-4 px-3 py-4 rounded-sm"
+          >
+            <Smile size={16} />
+            Change icon
+          </Button>
+        </IconPicker>
 
         <DropdownMenuSeparator />
 

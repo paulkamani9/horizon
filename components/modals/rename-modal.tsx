@@ -50,7 +50,7 @@ export const RenameModal = () => {
     });
 
     toast.promise(promise, {
-      success: "Success, you have changed documents' name.",
+      success: "Success, you have changed your documents' name.",
       loading: "Renaming document",
       error: "Failed to rename document",
     });
@@ -58,7 +58,11 @@ export const RenameModal = () => {
 
   if (isMobile) {
     return (
-      <Drawer open={isOpen} onClose={onClose} onOpenChange={(isOpen) => !isOpen}>
+      <Drawer
+        open={isOpen}
+        onClose={onClose}
+        onOpenChange={(isOpen) => !isOpen}
+      >
         <DrawerContent>
           <DrawerHeader>
             <DrawerTitle>Rename document</DrawerTitle>

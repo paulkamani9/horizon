@@ -46,27 +46,27 @@ export const IconPicker = ({
   const currentTheme = (resolvedTheme || "light") as keyof typeof themeMap;
   const theme = themeMap[currentTheme];
 
-  if (isDropdown) {
-    return (
-      <Popover open={open}>
-        <PopoverTrigger onClick={toOpen}>{children}</PopoverTrigger>
-        <PopoverContent className="p-0 w-full border-none shadow-none">
-          <EmojiPicker
-            className="absolute bottom-2"
-            height={350}
-            theme={theme}
-            onEmojiClick={(data, e) => {
-              onChange(data.emoji);
-            }}
-          />
-        </PopoverContent>
-      </Popover>
-    );
-  }
+  // if (isDropdown) {
+  //   return (
+  //     <Popover open={open}>
+  //       <PopoverTrigger onClick={toOpen}>{children}</PopoverTrigger>
+  //       <PopoverContent className="p-0 w-full border-none shadow-none">
+  //         <Emoji-Picker
+  //           className="absolute bottom-2"
+  //           height={350}
+  //           theme={theme}
+  //           onEmojiClick={(data, e) => {
+  //             onChange(data.emoji);
+  //           }}
+  //         />
+  //       </PopoverContent>
+  //     </Popover>
+  //   );
+  // }
 
   return (
     <Popover>
-      <PopoverTrigger onClick={toOpen}>{children}</PopoverTrigger>
+      <PopoverTrigger onClick={toOpen} className="w-full">{children}</PopoverTrigger>
       <PopoverContent className="p-0 w-full border-none shadow-none">
         <EmojiPicker
           open={open}
