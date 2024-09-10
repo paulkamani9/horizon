@@ -10,6 +10,7 @@ import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { DocumentEditor } from "./_components/DocumentEditor";
 import { NotAllowed } from "../../_components/not-allowed";
+import { PageWrapper } from "../../_components/wrapper";
 
 interface DocumentLayoutProps {
   children: React.ReactNode;
@@ -61,10 +62,23 @@ const DocumentLayout = ({ children }: DocumentLayoutProps) => {
           !isOpen && "hidden"
         )}
       />
-      <div className="mt-4 w-full xl:w-[calc(100%-288px)]  h-[calc(100%-112px)] overflow-auto  scrollbar-thin scrollbar-track-transparent scrollbar-thumb-gray-600">
-        <DocumentEditor {...document} />
-        {/* {children} */}
-      </div>
+      {/* we overwrite the default PageWrapper margin to lower it
+      so we take add the difference of 12 px from the max-height, 
+      we also give it a padding of 0 - meaning more space at the sides and top,
+       for better typing and reading experience*/}
+      <PageWrapper
+        size={document.role === "invited" ? "large" : "compact"}
+        className={
+          document.role !== "invited"
+            ? "mt-2 max-h-[calc(100%-48px)] px-0"
+            : "px-0"
+        }
+      >
+        <div className="mt-4 w-full xl:w-[calc(100%-124px)] overflow-auto">
+          <DocumentEditor {...document} />
+          {/* {children} */}
+        </div>
+      </PageWrapper>
     </div>
   );
 };

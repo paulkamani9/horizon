@@ -9,7 +9,9 @@ const FeedLayout = ({ children }: FeedLayoutProps) => {
   return (
     <div className="h-full w-full px-2">
       <Header />
-      <PageWrapper size="compact">{children}</PageWrapper>
+      {/* we overwrite the default PageWrapper margin to lower it
+      so we take add the difference of 32 px from the max-height*/}
+      <PageWrapper size="large" className=" mt-2 max-h-[calc(100%-104px)]">{children}</PageWrapper>
     </div>
   );
 };

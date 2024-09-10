@@ -1,6 +1,8 @@
 //unused page
 
-const DocumentPage = () => {
-  return <div>DocumentPage</div>;
-};
-export default DocumentPage;
+const page = () => {
+  return (
+    <div>page</div>
+  )
+}
+export default page

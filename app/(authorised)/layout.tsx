@@ -38,7 +38,7 @@ const AuthorizedLayout = ({ children }: AuthorizedLayoutProps) => {
           <Sidebar />
           <div className="h-full w-full flex flex-col xl:pl-[300px] pl-[250px]">
             <Toolbar />
-            <section className="flex-1 px-6  lg:max-h-[calc(100vh-130px)] overflow-auto">
+            <section className="flex-1 px-6  lg:max-h-[calc(100vh-130px)] overflow-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-gray-600">
               {children}
             </section>
           </div>
@@ -48,7 +48,7 @@ const AuthorizedLayout = ({ children }: AuthorizedLayoutProps) => {
   }
 
   return (
-    <main className="h-full  w-full bg-[--light-bg] dark:bg-[--dark-bg] flex flex-col relative ">
+    <main className="h-full w-full bg-[--light-bg] dark:bg-[--dark-bg] flex flex-col relative ">
       <Topper />
       <Toolbar />
       <div
@@ -74,7 +74,7 @@ const AuthorizedLayout = ({ children }: AuthorizedLayoutProps) => {
         )}
       />
       <Sidebar />
-      <section className="px-4 flex-1 sm:px-6  overflow-auto max-h-[calc(100vh-140px)] md:max-h-[calc(100vh-120px)] ">
+      <section className="flex-1 overflow-auto max-h-[calc(100vh-80px)] scrollbar-thin scrollbar-track-transparent scrollbar-thumb-gray-600">
         {children}
       </section>
     </main>

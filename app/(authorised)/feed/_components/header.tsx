@@ -6,7 +6,7 @@ import { HeaderItems } from "./header-items";
 export const Header = () => {
   const pathname = usePathname();
   return (
-    <HeaderWrapper size="compact">
+    <HeaderWrapper size="large">
       <div className="w-full h-full flex items-center justify-between">
         <h1 className="text-xl font-semibold">
           {pathname === "/feed" && "General"}
