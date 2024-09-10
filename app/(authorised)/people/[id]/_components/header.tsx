@@ -27,7 +27,7 @@ const Header = ({ id }: HeaderProps) => {
 
   return (
     <HeaderWrapper>
-      <div className="w-full h-full flex  gap-4">
+      <div className="w-full h-full flex gap-4 lg:pt-6">
         <div className="h-10 w-10 rounded-[50%] relative overflow-clip">
           <Image src={user.image} alt={user.name} objectFit="fill" fill />
         </div>

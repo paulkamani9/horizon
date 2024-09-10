@@ -6,7 +6,10 @@ const PeoplePage = () => {
   return (
     <section className="w-full h-full px-2 ">
       <Header />
-      <PageWrapper size="compact">
+      <PageWrapper
+        size="large"
+        className="mt-2 max-h-[calc(100%-104px)]"
+      >
         <UsersList />
       </PageWrapper>
     </section>

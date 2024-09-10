@@ -14,7 +14,6 @@ export const SearchBar = () => {
 
   return (
     <div className="w-full">
-
       {/* mobile search component */}
       <Search
         size={20}
@@ -25,10 +24,11 @@ export const SearchBar = () => {
       />
 
       {/* tablet and beyond */}
-      <div className="relative w-full hidden lg:flex">
-        <div onClick={() => onOpen()}>
-          <Search size={16} className="absolute top-2 left-2" />
-          <Input className="bg-transparent border border-black dark:border-white  text-base  h-9  pl-10" />
+      <div className="lg:flex hidden relative w-full">
+        {/* the size of the search bar here is 40px */}
+        <div onClick={() => onOpen()} className="w-full">
+          <Search size={16} className="absolute top-3 left-2" />
+          <Input className="w-full h-10 pl-10 bg-transparent border border-black dark:border-white text-base" />
         </div>
         <SearchDialog />
       </div>

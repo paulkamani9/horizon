@@ -14,7 +14,7 @@ export const Header = () => {
   if (user === undefined) {
     return (
       <HeaderWrapper>
-        <div className="w-full h-full flex  items-center justify-between">
+        <div className="w-full h-full flex items-center justify-between">
           <div className="flex-1 flex flex-col gap-2">
             <Skeleton className="h-10 w-2/3 md:w-1/3" />
           </div>
@@ -44,7 +44,7 @@ export const Header = () => {
 
   return (
     <HeaderWrapper>
-      <div className="flex flex-col gap-2">
+      <div className="w-full h-full flex flex-col gap-2 justify-center">
         <span className="text-2xl font-semibold">{user.name}</span>
         <UserCounts large={true} id={user.externalId} />
       </div>

@@ -63,7 +63,7 @@ export const Header = ({ documentId, role, icon, title }: HeaderProps) => {
 
   return (
     <HeaderWrapper size={role ===  "invited" ? "large" : "compact"}>
-      <div className="w-full xl:w-[calc(100%-256px)] h-full flex flex-col">
+      <div className="w-full h-full flex flex-col">
         <div className="flex items-center justify-between flex-1">
           <div className="flex items-center gap-1 truncate w-full max-w-[90%]">
             {role === "owner" && (
@@ -103,7 +103,7 @@ export const Header = ({ documentId, role, icon, title }: HeaderProps) => {
               }
             }}
             className={cn(
-              "cursor-pointer transition-transform xl:hidden hover:-translate-x-1",
+              "cursor-pointer transition-transform  hover:-translate-x-1",
               isOpen && "rotate-180 hover:translate-x-1"
             )}
           />

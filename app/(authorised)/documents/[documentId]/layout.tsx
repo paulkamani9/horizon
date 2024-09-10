@@ -74,7 +74,7 @@ const DocumentLayout = ({ children }: DocumentLayoutProps) => {
             : "px-0"
         }
       >
-        <div className="mt-4 w-full xl:w-[calc(100%-124px)] overflow-auto">
+        <div className="mt-4 w-full overflow-auto">
           <DocumentEditor {...document} />
           {/* {children} */}
         </div>

@@ -38,7 +38,7 @@ const AuthorizedLayout = ({ children }: AuthorizedLayoutProps) => {
           <Sidebar />
           <div className="h-full w-full flex flex-col xl:pl-[300px] pl-[250px]">
             <Toolbar />
-            <section className="flex-1 px-6  lg:max-h-[calc(100vh-130px)] overflow-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-gray-600">
+            <section className="flex-1  max-h-[calc(100vh-96px)] overflow-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-gray-600">
               {children}
             </section>
           </div>

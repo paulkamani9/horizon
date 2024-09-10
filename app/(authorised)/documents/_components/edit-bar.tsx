@@ -50,8 +50,8 @@ export const EditBar = ({
         setPositionX(undefined);
       }}
       className={cn(
-        "fixed right-0  h-[calc(100%-226px)] w-72 transition-transform z-[55] bg-[--light-bg2] dark:bg-[--dark-bg]",
-        !isPC && !isOpen && "translate-x-full"
+        "fixed right-0 h-[calc(100%-226px)] w-72 transition-transform z-[55] bg-[--light-bg2] dark:bg-[--dark-bg]",
+       !isOpen && "translate-x-full"
       )}
     >
       <div className="w-full h-full border-t border-l flex flex-col gap-8 border-white pl-4 pr-4 md:pr-2 py-2 overflow-y-auto pb-20  scrollbar-thin scrollbar-track-transparent scrollbar-thumb-gray-600">

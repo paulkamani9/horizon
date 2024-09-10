@@ -32,7 +32,7 @@ export const NewButton = () => {
     <button
       onClick={onCreateDocument}
       disabled={pending}
-      className="bg-blue-800 text-white flex items-center  justify-center px-4 py-2 rounded-lg disabled:cursor-not-allowed disabled:opacity-60"
+      className="bg-blue-800 text-white flex items-center justify-center px-4 py-2 rounded-lg disabled:cursor-not-allowed disabled:opacity-60"
     >
       <Plus size={20} className="mr-2" />
       <span className="text-base lg:text-xl">New</span>

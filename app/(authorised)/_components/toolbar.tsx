@@ -15,7 +15,7 @@ export const Toolbar = () => {
       size of all items is 24px.
       that gives the toolbar a cumulative size of 72px
       */}
-      <div className="w-full flex lg:hidden items-center justify-between px-4 sm:px-6 py-6">
+      <div className="w-full flex lg:hidden items-center justify-between px-4 sm:px-6 md:px-10 py-6">
         <div>
           <Menu
             size={20}
@@ -33,14 +33,12 @@ export const Toolbar = () => {
         </div>
       </div>
 
-      {/* tablet and larger toolbar */}
-      <div className="lg:flex hidden pl-6 pr-6 w-full items-center justify-start py-2  gap-6 xl:pr-16 pb-10">
-        <div className="flex-1 ">
-          <SearchBar />
-        </div>
-        <div className="inline-block">
-          <NewButton />
-        </div>
+      {/* tablet and larger toolbar
+       we give a padding right of 72 to match th size of  the edit bar
+       when it is fixed-open*/}
+      <div className="lg:flex hidden px-6 lg:px-10 xl:px-16 2xl:px-20 py-6 w-full items-center justify-start gap-12">
+        <SearchBar />
+        <NewButton />
       </div>
     </section>
   );
