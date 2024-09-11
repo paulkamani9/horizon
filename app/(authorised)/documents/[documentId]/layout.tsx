@@ -3,7 +3,7 @@ import { useEditBar } from "@/store/use-edit-bar";
 import { EditBar } from "../_components/edit-bar";
 import { Header, HeaderSkeleton } from "../_components/header";
 import { cn } from "@/lib/utils";
-import { usePC } from "@/hooks/use-Pc";
+// import { usePC } from "@/hooks/use-Pc";
 import { useParams } from "next/navigation";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
@@ -17,7 +17,7 @@ interface DocumentLayoutProps {
 }
 
 const DocumentLayout = ({ children }: DocumentLayoutProps) => {
-  const isPC = usePC();
+  // const isPC = usePC();
   const { isOpen, onClose } = useEditBar();
   const params = useParams();
   const documentId = params.documentId as string;
@@ -57,8 +57,8 @@ const DocumentLayout = ({ children }: DocumentLayoutProps) => {
           onClose();
         }}
         className={cn(
-          "fixed h-full w-full top-0 left-0",
-          isPC && "hidden",
+          "fixed h-full w-full top-0 left-0 bg-green-100",
+          // isPC && "hidden",
           !isOpen && "hidden"
         )}
       />

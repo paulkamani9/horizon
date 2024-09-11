@@ -1,6 +1,5 @@
 "use client";
 
-import { usePC } from "@/hooks/use-Pc";
 import { cn } from "@/lib/utils";
 import { useEditBar } from "@/store/use-edit-bar";
 import { PublicInformation } from "./public-information";
@@ -33,7 +32,6 @@ export const EditBar = ({
   createdAt,
 }: EditBarProps) => {
   const { isOpen, onClose } = useEditBar();
-  const isPC = usePC();
   const [positionX, setPositionX] = useState<number | undefined>();
   return (
     <div
