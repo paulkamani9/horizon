@@ -38,7 +38,7 @@ export const DocumentEditor = ({ _id, role, content }: DocumentEditorProps) => {
 
   if (role !== "owner" && role !== "admin") {
     return (
-      <div className="w-full border py-2  bg-card text-card-foreground shadow-sm min-h-full rounded-sm">
+      <div className="w-full border py-2  bg-card text-card-foreground shadow-sm min-h-[850px] rounded-sm">
         <PublicEditor content={content} />
       </div>
     );

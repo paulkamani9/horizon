@@ -16,7 +16,7 @@ export const SearchBar = () => {
     <div className="w-full">
       {/* mobile search component */}
       <Search
-        size={20}
+        size={24}
         className="lg:hidden"
         onClick={() => {
           onOpen();

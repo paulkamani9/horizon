@@ -71,14 +71,14 @@ const DocumentLayout = ({ children }: DocumentLayoutProps) => {
         className={
           document.role !== "invited"
             ? "mt-2 max-h-[calc(100%-48px)] px-0"
-            : "px-0"
+            : "mt-2 max-h-[calc(100%-104px)] px-0"
         }
       >
-        <div className="mt-4 w-full overflow-auto">
+        <div className="mt-4 h-full w-full overflow-auto">
           <DocumentEditor {...document} />
           {/* {children} */}
         </div>
-      </PageWrapper>
+      </PageWrapper> 
     </div>
   );
 };

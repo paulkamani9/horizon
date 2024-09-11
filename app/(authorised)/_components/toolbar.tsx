@@ -18,7 +18,7 @@ export const Toolbar = () => {
       <div className="w-full flex lg:hidden items-center justify-between px-4 sm:px-6 md:px-10 py-6">
         <div>
           <Menu
-            size={20}
+            size={24}
             onClick={(e) => {
               e.stopPropagation();
               onOpen();

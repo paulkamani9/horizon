@@ -49,12 +49,19 @@ export const EditBar = ({
       onTouchEnd={() => {
         setPositionX(undefined);
       }}
+      // the edit bar,comes in two variation and sub-variations
+      // the mobile and pc
+      // each with a category for a compact and large header
+      // the edit bar, is a fixed container, that starts directly below the header wrapper
+      // therefore its height at any point will be the the difference between the full height and fixed top added to the header wrapper,
+      //
       className={cn(
-        "fixed right-0 h-[calc(100%-226px)] w-72 transition-transform z-[55] bg-[--light-bg2] dark:bg-[--dark-bg]",
-       !isOpen && "translate-x-full"
+        "fixed right-0 h-[calc(100%-120px)] lg:h-[calc(100%-136px)] w-72 transition-transform z-[55] bg-[--light-bg2] dark:bg-[--dark-bg] overflow-y-auto  scrollbar-thin scrollbar-track-transparent scrollbar-thumb-gray-600",
+        !isOpen && "translate-x-full",
+        role === "invited" && "h-[calc(100%-176px)] lg:h-[calc(100%-192px)]"
       )}
     >
-      <div className="w-full h-full border-t border-l flex flex-col gap-8 border-white pl-4 pr-4 md:pr-2 py-2 overflow-y-auto pb-20  scrollbar-thin scrollbar-track-transparent scrollbar-thumb-gray-600">
+      <div className="w-full min-h-full border-t border-l border-b flex flex-col gap-8 border-white pl-4 pr-4 md:pr-2 py-2 pt-8 pb-40">
         <PublicInformation isPublic={isPublic} title={title} />
         <StarButton
           isPublic={isPublic}
