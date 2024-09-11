@@ -57,7 +57,7 @@ const DocumentLayout = ({ children }: DocumentLayoutProps) => {
           onClose();
         }}
         className={cn(
-          "fixed h-full w-full top-0 left-0 bg-green-100",
+          "fixed h-full w-full top-0 left-0",
           // isPC && "hidden",
           !isOpen && "hidden"
         )}
