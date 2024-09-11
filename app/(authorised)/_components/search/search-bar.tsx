@@ -2,15 +2,11 @@
 
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
-import { usePathname } from "next/navigation";
-import { SettingsHeader } from "./settings-header";
 import { useSearchModal } from "@/store/use-search-modal";
 import { SearchDialog } from "./search-dialog";
 
 export const SearchBar = () => {
   const { onOpen } = useSearchModal();
-  const pathname = usePathname();
-  if (pathname === "/settings") return <SettingsHeader />;
 
   return (
     <div className="w-full">
