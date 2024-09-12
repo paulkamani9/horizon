@@ -1,7 +1,6 @@
 "use client";
 
 import { Logo } from "@/components/Logo";
-import { useSidebar } from "@/store/use-sidebar";
 import { SearchBar } from "./search/search-bar";
 import { NewButton } from "./new-button";
 import { usePathname } from "next/navigation";

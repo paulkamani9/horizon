@@ -1,13 +1,19 @@
 import { create } from "zustand";
 
+const defaultValue = {
+  search: "",
+};
+
 interface SearchStore {
+  initialValue: typeof defaultValue;
   isOpen: boolean;
-  onOpen: () => void;
+  onOpen: (search: string) => void;
   onClose: () => void;
 }
 
 export const useSearchModal = create<SearchStore>((set) => ({
   isOpen: false,
-  onOpen: () => set({ isOpen: true }),
-  onClose: () => set({ isOpen: false }),
+  onOpen: (search: string) => set({ isOpen: true, initialValue: { search } }),
+  onClose: () => set({ isOpen: false, initialValue: defaultValue}),
+  initialValue: defaultValue,
 }));
